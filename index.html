@@ -8,7 +8,7 @@
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title data-i18n="title">مكتبة زياد - الروقان كله 2026 ☕</title>
+    <title data-i18n="title">Ziad Library 2026 ☕</title>
 
     
 
@@ -206,7 +206,7 @@
 
     <div id="loader"><div class="spinner"></div></div>
 
-    <div class="floating-badge" id="floatingBadge" data-i18n="floatingBadge">Ziad البابا 😎</div>
+    <div class="floating-badge" id="floatingBadge" data-i18n="floatingBadge">Ziad #1 😎</div>
 
     
 
@@ -220,7 +220,7 @@
 
         <div id="settingsBtn">
 
-            <button class="status-chip" onclick="playAudio('click'); openSettings()" data-i18n="settings">⚙️ تظبيط المسائل</button>
+            <button class="status-chip" onclick="playAudio('click'); openSettings()" data-i18n="settings">⚙️ الإعدادات</button>
 
         </div>
 
@@ -250,11 +250,11 @@
 
     <div id="loginPage" class="glass-panel">
 
-        <h2 id="loginTitle" style="color:var(--primary); margin-top:0" data-i18n="loginTitle">خش برجلك اليمين يا معلم 🦵</h2>
+        <h2 id="loginTitle" style="color:var(--primary); margin-top:0" data-i18n="loginTitle">خش هتجيبك</h2>
 
         <p id="loginDesc" style="font-size:0.9rem; color:#aaa; margin-bottom:15px; display:none" data-i18n="loginDesc">شكلك أول مرة تشرفنا، اعملك كلمة سر عشان محدش يفتش في كتبك:</p>
 
-        <input type="password" id="passIn" placeholder="كلمة السر يا شقيق" data-i18n-placeholder="passwordPlaceholder">
+        <input type="password" id="passIn" placeholder="كلمة السر يا زميل" data-i18n-placeholder="passwordPlaceholder">
 
         <div id="secSetup" style="display:none">
 
@@ -264,7 +264,7 @@
 
         </div>
 
-        <button id="loginBtn" class="btn" onclick="handleAuth()" data-i18n="loginBtn">افتح يا سمسم 🔓</button>
+        <button id="loginBtn" class="btn" onclick="handleAuth()" data-i18n="loginBtn">تمام 🔓</button>
 
         <p id="forgotPassLink" onclick="playAudio('click'); showPage('secPage')" style="cursor:pointer; font-size:0.8rem; margin-top:20px; color:#555" data-i18n="forgotPass">نسيت الباسورد؟ كبر دماغك ودوس هنا</p>
 
@@ -294,9 +294,9 @@
 
             <div style="display:flex; gap:10px">
 
-                <div class="status-chip" onclick="playAudio('popup');" id="storageChip" data-i18n="storage">💾 المخزن: <span id="totalStorage">0 KB</span></div>
+                <div class="status-chip" onclick="playAudio('popup');" id="storageChip" data-i18n="storage">💾 التخزين: <span id="totalStorage">0 KB</span></div>
 
-                <div class="status-chip" onclick="playAudio('trash'); showBin()" style="border-color:var(--danger); color:var(--danger)" data-i18n="bin">🗑️ الزبالة (<span id="binCount">0</span>)</div>
+                <div class="status-chip" onclick="playAudio('trash'); showBin()" style="border-color:var(--danger); color:var(--danger)" data-i18n="bin">🗑️سلة الزبالة (<span id="binCount">0</span>)</div>
 
             </div>
 
@@ -332,13 +332,13 @@
 
             <select id="sort" onchange="playAudio('click'); render()">
 
-                <option value="new" data-i18n="sortNew">🕒 لسه واصل</option>
+                <option value="new" data-i18n="sortNew">🕒 الجديد</option>
 
                 <option value="az" data-i18n="sortAz">🔤 من الألف للياء</option>
 
             </select>
 
-            <button class="btn" onclick="playAudio('popup'); document.getElementById('fileIn').click()" data-i18n="uploadBtn">➕ ارفع يا نجم</button>
+            <button class="btn" onclick="playAudio('popup'); document.getElementById('fileIn').click()" data-i18n="uploadBtn">➕ ارفع يا برنس</button>
 
             <input type="file" id="fileIn" accept=".pdf" style="display:none" onchange="upload(event)">
 
@@ -350,7 +350,7 @@
 
     <div id="settingsModal" class="modal"><div class="modal-box">
 
-        <h4 style="color:var(--primary); margin-top:0" data-i18n="settingsTitle">تظبيط المسائل ⚙️</h4>
+        <h4 style="color:var(--primary); margin-top:0" data-i18n="settingsTitle">الإعدادات ⚙️</h4>
 
         <label data-i18n="themeLabel">الروقان والألوان:</label>
 
@@ -400,7 +400,7 @@
 
         <input type="text" id="newSecAnswer" placeholder="إجابة الأمان الجديدة" data-i18n-placeholder="newSecAPlaceholder">
 
-        <button class="btn" onclick="playAudio('success'); saveNewPassAndSec()" data-i18n="saveChanges">اعتمد التغييرات 👌</button>
+        <button class="btn" onclick="playAudio('success'); saveNewPassAndSec()" data-i18n="saveChanges">تمام كدا 👌</button>
 
         <button class="btn" style="background:#333; margin-top:10px" onclick="playAudio('click'); closeModals()" data-i18n="close">إغلاق</button>
 
@@ -530,7 +530,7 @@
 
         <textarea id="editDesc" rows="3"></textarea>
 
-        <button class="btn" onclick="saveEdit()" data-i18n="saveEdit">سيف التعديلات 💾</button>
+        <button class="btn" onclick="saveEdit()" data-i18n="saveEdit">خلصانة 💾</button>
 
         <button class="btn" style="background:#333; margin-top:10px" onclick="closeModals()" data-i18n="cancelEdit">خلاص مش معدل</button>
 
