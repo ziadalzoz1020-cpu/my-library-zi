@@ -1,0 +1,5 @@
+User-agent: *
+
+Allow: /
+
+Sitemap: https://ziadalzoz1020-cpu.github.io/my-library-zi/sitemap.xml
