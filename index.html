@@ -1,1237 +1,0 @@
-<!DOCTYPE html>
-<html lang="ar" dir="rtl">
-<head>
-    <meta name="google-site-verification" content="2kFVYvoMQC6qESM3mWPoBrKCJY0zniDl2dsSJPUIqrw" />
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title data-i18n="title">مكتبة زياد - الروقان كله 2026 ☕</title>
-    
-    <meta name="theme-color" content="#050505">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="Ziad Library">
-    <link rel="apple-touch-icon" href="favicon.png">
-    
-    <link rel="manifest" href="manifest.json">
-    <link rel="icon" type="image/png" href="favicon.png">
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;600;900&family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
-    <meta name="description" content="مكتبة زياد (Ziad Library) - مكتبة إلكترونية ذكية لتنظيم وقراءة كتب الـ PDF بطريقة احترافية وروقان.">
-    <meta name="keywords" content="مكتبة زياد, Ziad Library, قراءة كتب PDF, تنظيم مكتبة إلكترونية, تطبيق كتب">
-    <meta property="og:title" content="مكتبة زياد - الروقان كله">
-    <meta property="og:image" content="https://ziadalzoz1020-cpu.github.io/my-library-zi/favicon.png">
-    
-    <style>
-        :root {
-            --primary: #00d4ff; --bg: #050505; --card: #0d1117;
-            --text: #ffffff; --border: rgba(255,255,255,0.1); --danger: #ff4d4d;
-            --success: #2ecc71;
-        }
-        [data-theme="light"] { --bg: #f0f2f5; --card: #ffffff; --text: #1a1a1a; --primary: #007bff; --border: rgba(0,0,0,0.1); }
-        [data-theme="purple"] { --bg: #1a0b2e; --card: #2d1454; --text: #ffffff; --primary: #bc13fe; --border: rgba(255,255,255,0.1); }
-        [data-theme="forest"] { --bg: #0a1a0a; --card: #142d14; --text: #ffffff; --primary: #2ecc71; --border: rgba(255,255,255,0.1); }
-        [data-theme="sunset"] { --bg: #1a0f0f; --card: #2d1414; --text: #ffffff; --primary: #e67e22; --border: rgba(255,255,255,0.1); }
-        [data-theme="gold"] { --bg: #11110a; --card: #222214; --text: #ffffff; --primary: #f1c40f; --border: rgba(255,255,255,0.1); }
-        
-        * { box-sizing: border-box; transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
-        body { font-family: 'Cairo', sans-serif; background: var(--bg); color: var(--text); margin: 0; min-height: 100vh; overflow-x: hidden; }
-
-        /* --- بداية ستايل شاشة البداية (Splash Screen) --- */
-        #splash-screen {
-            position: fixed;
-            inset: 0;
-            background-color: #000;
-            z-index: 99999; /* فوق كل شيء */
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            opacity: 1;
-            transition: opacity 1s ease-out, visibility 1s;
-        }
-        
-        #splash-screen.fade-out {
-            opacity: 0;
-            visibility: hidden;
-            pointer-events: none;
-        }
-
-        .splash-number {
-            font-size: 4rem;
-            color: #FFD700; /* ذهبي */
-            font-weight: 900;
-            margin-bottom: 20px;
-            text-shadow: 0 0 15px rgba(255, 215, 0, 0.5);
-            animation: floatGold 3s ease-in-out infinite;
-        }
-
-        .splash-logo {
-            width: 120px;
-            height: 120px;
-            border-radius: 50%;
-            border: 4px solid #00d4ff; /* إطار سماوي */
-            box-shadow: 0 0 40px rgba(0, 212, 255, 0.6); /* توهج سماوي */
-            object-fit: cover;
-            margin-bottom: 20px;
-        }
-
-        .splash-title {
-            font-size: 3rem;
-            font-weight: 900;
-            color: #fff;
-            margin: 10px 0 0 0;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-        }
-
-        .splash-sign {
-            font-family: 'Dancing Script', cursive; /* ستايل توقيع */
-            font-size: 1.8rem;
-            color: #aaa;
-            margin-top: 5px;
-            transform: rotate(-5deg); /* ميلان بسيط للتوقيع */
-        }
-
-        .splash-footer {
-            font-size: 0.7rem;
-            color: #555;
-            margin-top: 40px;
-            position: absolute;
-            bottom: 30px;
-        }
-
-        @keyframes floatGold {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-15px); }
-        }
-        /* --- نهاية ستايل شاشة البداية --- */
-
-        .floating-badge {
-            position: fixed; bottom: 20px; right: 20px;
-            background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px);
-            border: 1px solid var(--primary); color: var(--primary);
-            padding: 10px 20px; border-radius: 50px; font-weight: 900;
-            box-shadow: 0 0 20px rgba(0, 212, 255, 0.3); z-index: 9999;
-            animation: pulse 2s infinite, float 3s ease-in-out infinite; display: none;
-        }
-        @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(0,212,255,0.4); } 70% { box-shadow: 0 0 0 15px rgba(0,212,255,0); } }
-        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
-        
-        .header { text-align: center; padding: 30px 0; position: relative; }
-        #settingsBtn { display: none; position: absolute; top: 60px; left: 15px; z-index: 100; }
-        #downloadBtn { display: none; position: absolute; top: 15px; left: 15px; z-index: 100; }
-        #themeToggle { display: none; position: absolute; top: 105px; left: 15px; z-index: 100; }
-        .user-logo { width: 100px; height: 100px; border-radius: 20px; border: 2px solid var(--primary); box-shadow: 0 0 20px var(--primary); object-fit: cover; }
-        .ziad-name { font-size: 2rem; font-weight: 900; text-shadow: 0 0 15px var(--primary); margin: 10px 0; }
-        
-        .glass-panel { background: rgba(255,255,255,0.03); backdrop-filter: blur(15px); border: 1px solid var(--border); border-radius: 25px; padding: 35px; width: 90%; max-width: 400px; margin: 40px auto; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-        input, select, textarea { width: 100%; padding: 12px; margin: 10px 0; border-radius: 10px; border: 1px solid var(--border); background: rgba(0,0,0,0.3); color: var(--text); text-align: center; font-family: 'Cairo'; outline: none; }
-        input:focus, textarea:focus { border-color: var(--primary); box-shadow: 0 0 10px var(--primary); }
-        
-        .btn { background: linear-gradient(45deg, #0056b3, var(--primary)); color: white; border: none; padding: 12px; border-radius: 10px; font-weight: 700; cursor: pointer; width: 100%; font-size: 1rem; }
-        .btn:hover { transform: translateY(-3px); box-shadow: 0 8px 20px var(--primary); }
-        
-        #libraryContent { display: none; padding: 20px; max-width: 1300px; margin: auto; animation: fadeIn 0.5s ease; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        
-        .top-nav { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; gap: 15px; flex-wrap: wrap; }
-        .status-chip { background: var(--card); padding: 8px 16px; border-radius: 50px; border: 1px solid var(--primary); cursor: pointer; font-size: 0.85rem; display: flex; align-items: center; gap: 8px; font-weight: bold; }
-        .status-chip:hover { background: var(--primary); color: #000; }
-        .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.9); display: none; z-index: 2000; padding: 0; backdrop-filter: blur(5px); }
-        .modal-box { background: var(--card); max-width: 100%; margin: 0; padding: 0; border-radius: 0; border: none; position: relative; max-height: 100vh; overflow: hidden; display: flex; flex-direction: column; }
-        .controls { display: grid; grid-template-columns: 2fr 1fr 1fr auto; gap: 12px; background: var(--card); padding: 15px; border-radius: 15px; margin-bottom: 30px; border: 1px solid var(--border); }
-        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 20px; }
-        
-        .card { background: var(--card); border-radius: 20px; padding: 12px; border: 1px solid var(--border); position: relative; overflow: hidden; display: flex; flex-direction: column; }
-        .card:hover { transform: translateY(-10px); border-color: var(--primary); box-shadow: 0 10px 20px rgba(0,0,0,0.4); }
-        .card-tag { position: absolute; top: 12px; right: 12px; background: var(--primary); color: #000; font-size: 0.7rem; padding: 4px 10px; border-radius: 8px; font-weight: 900; z-index: 5; }
-        .preview { width: 100%; aspect-ratio: 3/4; border-radius: 12px; object-fit: cover; background: #111; cursor: pointer; }
-        
-        .book-title { font-weight: 900; color: var(--primary); text-align: center; margin: 10px 0 5px 0; font-size: 1.1rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .book-author { font-size: 0.85rem; color: #ccc; text-align: center; margin-bottom: 5px; font-weight: 600; }
-        .book-meta { font-size: 0.7rem; color: #777; margin-bottom: 10px; text-align: center; display: flex; justify-content: center; gap: 10px; }
-        .card-btns { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: auto; }
-        .btn-s { padding: 8px; border-radius: 8px; border: none; font-weight: bold; font-size: 0.8rem; cursor: pointer; color: #fff; transition:0.2s; }
-        .btn-edit { background: rgba(255,255,255,0.1); color: var(--primary); border: 1px solid var(--primary); grid-column: span 2; }
-        
-        .book-rating { color: #f1c40f; font-size: 0.9rem; margin-bottom: 5px; text-align: center; }
-        #toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: var(--primary); color: #000; padding: 12px 30px; border-radius: 15px; font-weight: 800; display: none; z-index: 5000; box-shadow: 0 5px 15px rgba(0,0,0,0.3); }
-        
-        @media (max-width: 600px) {
-            .grid { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; }
-            .controls { grid-template-columns: 1fr; }
-        }
-        .footer { text-align: center; padding: 40px; color: #666; font-size: 0.9rem; font-weight: bold; }
-        svg.icon { width: 32px; height: 32px; margin-bottom: 5px; stroke: var(--primary); }
-    </style>
-</head>
-<body data-theme="dark" data-lang="ar-EG">
-
-    <div id="splash-screen">
-        <div class="splash-number">#1</div>
-        <img src="favicon.png" class="splash-logo" onerror="this.src='https://cdn-icons-png.flaticon.com/512/1043/1043322.png'">
-        <div class="splash-title">Ziad Library</div>
-        <div class="splash-sign">Made in Aldriny</div>
-        <div class="splash-footer">"أفضل موقع يدير كتبك"</div>
-    </div>
-
-    <div class="floating-badge" id="floatingBadge" data-i18n="floatingBadge">Ziad البابا 😎</div>
-    
-    <div class="header">
-        <div id="downloadBtn">
-            <button class="status-chip" onclick="playAudio('click'); openDownloadModal()" data-i18n="downloadBooks">📚 تنزيل كتب</button>
-        </div>
-        <div id="settingsBtn">
-            <button class="status-chip" onclick="playAudio('click'); openSettings()" data-i18n="settings">⚙️ تظبيط المسائل</button>
-        </div>
-        <div id="themeToggle">
-            <button class="status-chip" onclick="playAudio('click'); toggleTheme()" data-i18n="toggleTheme">تبديل الوضع 🌗</button>
-        </div>
-        <img src="favicon.png" class="user-logo" onerror="this.src='https://cdn-icons-png.flaticon.com/512/1043/1043322.png'">
-        <div class="ziad-name" data-i18n="ziadName">Ziad Library <span style="font-size:1rem; vertical-align:middle; color:var(--primary)">VIP</span></div>
-    </div>
-
-    <div id="welcomePage" class="glass-panel" style="display:none">
-        <h2 style="color:var(--primary); margin-top:0" data-i18n="welcomeTitle">مكتبتك الخاصة بكلمة مرورك</h2>
-        <p style="font-size:0.9rem; color:#aaa; margin-bottom:15px;" data-i18n="welcomeDesc">هذه مكتبة شخصية لإدارة كتبك الإلكترونية بأمان وروقان.</p>
-        <button class="btn" onclick="choosePasswordMode()" data-i18n="createPassword">انشي كلمة المرور</button>
-        <button class="btn" style="background:#333; margin-top:10px" onclick="chooseNoPasswordMode()" data-i18n="startNoPassword">ابدا بدون كلمة مرور</button>
-    </div>
-
-    <div id="loginPage" class="glass-panel">
-        <h2 id="loginTitle" style="color:var(--primary); margin-top:0" data-i18n="loginTitle">خش برجلك اليمين يا معلم 🦵</h2>
-        <p id="loginDesc" style="font-size:0.9rem; color:#aaa; margin-bottom:15px; display:none" data-i18n="loginDesc">شكلك أول مرة تشرفنا، اعملك كلمة سر عشان محدش يفتش في كتبك:</p>
-        <input type="password" id="passIn" placeholder="كلمة السر يا شقيق" data-i18n-placeholder="passwordPlaceholder">
-        <div id="secSetup" style="display:none">
-            <input type="text" id="secQuestion" placeholder="سؤال الأمان (مثل: طولك كام؟)" data-i18n-placeholder="secQuestionPlaceholder">
-            <input type="text" id="secAnswer" placeholder="إجابة الأمان (افتكرها كويس)" data-i18n-placeholder="secAnswerPlaceholder">
-        </div>
-        <button id="loginBtn" class="btn" onclick="handleAuth()" data-i18n="loginBtn">افتح يا سمسم 🔓</button>
-        <p id="forgotPassLink" onclick="playAudio('click'); showPage('secPage')" style="cursor:pointer; font-size:0.8rem; margin-top:20px; color:#555" data-i18n="forgotPass">نسيت الباسورد؟ كبر دماغك ودوس هنا</p>
-        <button class="btn" style="background:#198754; margin-top:15px" onclick="playAudio('click'); openContactModal()" data-i18n="contactUs">تواصل معنا 📞</button>
-        <button class="btn" style="background:#6f42c1; margin-top:15px" onclick="playAudio('click'); openAboutModal()" data-i18n="aboutUs">لمحة عنا ℹ️</button>
-    </div>
-
-    <div id="secPage" class="glass-panel" style="display:none">
-        <h3 style="color:var(--primary)" data-i18n="forgotTitle">نسيت ولا إيه؟ 🤔</h3>
-        <p style="font-size:0.9rem" id="secQuestionText" data-i18n="secQuestionText">سؤال الأمان: </p>
-        <input type="text" id="secAns" placeholder="اكتب الإجابة هنا" data-i18n-placeholder="secAnsPlaceholder">
-        <button class="btn" onclick="checkSec()" data-i18n="proceed">يلا بينا</button>
-        <button class="btn" style="background:transparent; color:#777; margin-top:10px" onclick="playAudio('click'); showPage('loginPage')" data-i18n="back">ارجع يا مجنون</button>
-    </div>
-
-    <div id="libraryContent">
-        <div class="top-nav">
-            <div style="display:flex; gap:10px">
-                <div class="status-chip" onclick="playAudio('popup');" id="storageChip" data-i18n="storage">💾 المخزن: <span id="totalStorage">0 KB</span></div>
-                <div class="status-chip" onclick="playAudio('trash'); showBin()" style="border-color:var(--danger); color:var(--danger)" data-i18n="bin">🗑️ الزبالة (<span id="binCount">0</span>)</div>
-            </div>
-            <div style="display:flex; gap:10px">
-                <button class="status-chip" style="background:#198754; color:#fff; border:none" onclick="playAudio('success'); exportData()" data-i18n="export">📤 خد نسخة (تصدير)</button>
-                <button class="status-chip" style="background:#6f42c1; color:#fff; border:none" onclick="playAudio('click'); document.getElementById('importFile').click()" data-i18n="import">📥 رجع النسخة (استيراد)</button>
-                <input type="file" id="importFile" accept=".json" style="display:none" onchange="importData(event)">
-            </div>
-        </div>
-        <div class="controls">
-            <input type="text" id="search" placeholder="🔍 بتدور على إيه يا غالي؟" oninput="render()" data-i18n-placeholder="searchPlaceholder">
-            <select id="catFilter" onchange="playAudio('click'); render()">
-                <option value="all" data-i18n="allCategories">📁 كله على بعضه</option>
-                <option value="كتب" data-i18n="booksCat">📚 كتب جد</option>
-                <option value="روايات" data-i18n="novelsCat">🎭 روايات وحكايات</option>
-                <option value="ملخصات" data-i18n="summariesCat">📝 برشامة الامتحانات</option>
-                <option value="أخرى" data-i18n="othersCat">✨ حاجات تانية</option>
-            </select>
-            <select id="sort" onchange="playAudio('click'); render()">
-                <option value="new" data-i18n="sortNew">🕒 لسه واصل</option>
-                <option value="az" data-i18n="sortAz">🔤 من الألف للياء</option>
-            </select>
-            <button class="btn" onclick="playAudio('popup'); document.getElementById('fileIn').click()" data-i18n="uploadBtn">➕ ارفع يا نجم</button>
-            <input type="file" id="fileIn" accept=".pdf" style="display:none" onchange="upload(event)">
-        </div>
-        <div class="grid" id="grid"></div>
-    </div>
-
-    <div id="settingsModal" class="modal"><div class="modal-box">
-        <h4 style="color:var(--primary); margin-top:0" data-i18n="settingsTitle">تظبيط المسائل ⚙️</h4>
-        <label data-i18n="themeLabel">الروقان والألوان:</label>
-        <select id="themeSelect" onchange="playAudio('click'); setTheme(this.value)">
-            <option value="dark" data-i18n="darkTheme">ضلمة (للعظماء)</option><option value="light" data-i18n="lightTheme">نور (يعمي العين)</option><option value="purple" data-i18n="purpleTheme">بنفسجي (روقان)</option><option value="forest" data-i18n="forestTheme">غابة (طبيعة)</option><option value="sunset" data-i18n="sunsetTheme">غروب (رومانسي)</option><option value="gold" data-i18n="goldTheme">دهبي (يا باشا)</option>
-        </select>
-        <label data-i18n="languageLabel">تغيير اللغة:</label>
-        <select id="langSelect" onchange="playAudio('click'); setLanguage(this.value)">
-            <option value="ar-EG" data-i18n="egyptianArabic">العربية المصرية</option>
-            <option value="ar" data-i18n="standardArabic">العربية الفصحى</option>
-            <option value="en" data-i18n="english">English</option>
-        </select>
-        <button class="btn" onclick="playAudio('click'); openChangePassModal()" data-i18n="changePass">غير كلمة السر 🔑</button>
-        <button class="btn" style="background:var(--danger); margin-top:15px" onclick="playAudio('trash'); deleteAllBooks()" data-i18n="deleteAll">احذف كله 🗑️</button>
-        <button class="btn" style="background:#198754; margin-top:15px" onclick="playAudio('click'); openContactModal()" data-i18n="contactUs">تواصل معنا 📞</button>
-        <button class="btn" style="background:#6f42c1; margin-top:15px" onclick="playAudio('click'); openAboutModal()" data-i18n="aboutUs">لمحة عنا ℹ️</button>
-        <button class="btn" style="background:#333; margin-top:15px" onclick="playAudio('click'); closeModals()" data-i18n="close">فكك (إغلاق)</button>
-    </div></div>
-
-    <div id="changePassModal" class="modal"><div class="modal-box">
-        <h4 style="color:var(--primary); margin-top:0" data-i18n="changePassTitle">غير كلمة السر وسؤال الأمان</h4>
-        <label data-i18n="newPassLabel">كلمة السر الجديدة:</label>
-        <input type="password" id="newPassInput" placeholder="اكتب كلمة السر الجديدة" data-i18n-placeholder="newPassPlaceholder">
-        <label data-i18n="newSecQLabel">سؤال الأمان الجديد:</label>
-        <input type="text" id="newSecQuestion" placeholder="سؤال الأمان الجديد (مثل: طولك كام؟)" data-i18n-placeholder="newSecQPlaceholder">
-        <label data-i18n="newSecALabel">إجابة الأمان الجديدة:</label>
-        <input type="text" id="newSecAnswer" placeholder="إجابة الأمان الجديدة" data-i18n-placeholder="newSecAPlaceholder">
-        <button class="btn" onclick="playAudio('success'); saveNewPassAndSec()" data-i18n="saveChanges">اعتمد التغييرات 👌</button>
-        <button class="btn" style="background:#333; margin-top:10px" onclick="playAudio('click'); closeModals()" data-i18n="close">إغلاق</button>
-    </div></div>
-
-    <div id="aboutModal" class="modal"><div class="modal-box">
-        <h4 style="color:var(--primary); margin-top:0" data-i18n="aboutTitle">لمحة عنا</h4>
-        <p style="font-size:0.9rem; color:#aaa; margin-bottom:15px;" data-i18n="aboutDesc">ده موقع مكتبة زياد، الروقان كله 2026 ☕، عشان تدير كتبك الإلكترونية بأمان وسهولة يا معلم. هنا تقدر ترفع كتبك الـ PDF، تصنفها، تبحث فيها، تقراها، وتحملها زي ما انت عايز. المكتبة دي شخصية تمامًا، مع كلمة مرور عشان محدش يفتش في حاجاتك، وفيها خاصية تصدير واستيراد البيانات عشان تنقل كتبك بسهولة. كمان فيها سلة مهملات عشان لو غلطت في حذف حاجة تقدر ترجعها، وتغيير الثيمات عشان تريح عيونك. كل ده مصمم بأحدث التقنيات عشان يشتغل آفلاين كمان زي الـ PWA. من صنع وإعداد زياد الدريني، يا ريس!</p>
-        <button class="btn" style="background:#333; margin-top:10px" onclick="playAudio('click'); closeModals()" data-i18n="close">إغلاق</button>
-    </div></div>
-
-    <div id="contactModal" class="modal"><div class="modal-box">
-        <h4 style="color:var(--primary); margin-top:0" data-i18n="contactTitle">تواصل معنا 📬</h4>
-        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px; margin-bottom: 20px;">
-            <div style="text-align: center; padding: 15px; background: var(--card); border: 1px solid var(--border); border-radius: 15px;">
-                <svg class="icon" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
-                <div style="font-weight: bold; color: var(--primary);" data-i18n="phoneWhatsapp">اتصال/واتساب</div>
-                <a href="tel:01055662785" class="btn-s" style="background:var(--primary); color:#000; margin-top:5px; display:block; text-decoration:none;" data-i18n="call">اتصال</a>
-                <a href="https://wa.me/01055662785" target="_blank" class="btn-s" style="background:#25D366; color:#fff; margin-top:5px; display:block; text-decoration:none;" data-i18n="whatsapp">واتساب</a>
-            </div>
-            <div style="text-align: center; padding: 15px; background: var(--card); border: 1px solid var(--border); border-radius: 15px;">
-                <svg class="icon" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
-                <div style="font-weight: bold; color: var(--primary);" data-i18n="facebook">فيسبوك</div>
-                <a href="https://www.facebook.com/profile.php?id=61583039190517&locale=ar_AR" target="_blank" style="color: #1877F2; text-decoration: none;" data-i18n="visitPage">زيارة الصفحة</a>
-            </div>
-            <div style="text-align: center; padding: 15px; background: var(--card); border: 1px solid var(--border); border-radius: 15px;">
-                <svg class="icon" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7.8,2H16.2C19.4,2 22,4.6 22,7.8V16.2A5.8,5.8 0 0,1 16.2,22H7.8C4.6,22 2,19.4 2,16.2V7.8A5.8,5.8 0 0,1 7.8,2M7.6,4A3.6,3.6 0 0,0 4,7.6V16.4C4,18.39 5.61,20 7.6,20H16.4A3.6,3.6 0 0,0 20,16.4V7.6C20,5.61 18.39,4 16.4,4H7.6M17.25,5.5A1.25,1.25 0 0,1 18.5,6.75A1.25,1.25 0 0,1 17.25,8A1.25,1.25 0 0,1 16,6.75A1.25,1.25 0 0,1 17.25,5.5M12,7A5,5 0 0,1 17,12A5,5 0 0,1 12,17A5,5 0 0,1 7,12A5,5 0 0,1 12,7M12,9A3,3 0 0,0 9,12A3,3 0 0,0 12,15A3,3 0 0,0 15,12A3,3 0 0,0 12,9Z"/></svg>
-                <div style="font-weight: bold; color: var(--primary);" data-i18n="instagram">إنستغرام</div>
-                <a href="https://www.instagram.com/ziadalzoz1020/" target="_blank" class="btn-s" style="background:linear-gradient(45deg, #f09433 0%,#e6683c 25%,#dc2743 50%,#cc2366 75%,#bc1888 100%); color:#fff; margin-top:5px; display:block; text-decoration:none;" data-i18n="instagramBtn">إنستغرام</a>
-            </div>
-        </div>
-        <button class="btn" style="background:#333; margin-top:10px" onclick="playAudio('click'); closeModals()" data-i18n="close">إغلاق</button>
-    </div></div>
-
-    <div id="uploadModal" class="modal"><div class="modal-box">
-        <h4 style="color:var(--primary)" data-i18n="uploadTitle">هات ما عندك يا مبدع</h4>
-        <div id="pendingFileName" style="font-size:0.8rem; color:#888; margin-bottom:10px"></div>
-        <label data-i18n="bookNameLabel">اسم الكتاب (عشان متتوهش):</label>
-        <input type="text" id="bookNameInput" placeholder="اكتب الاسم هنا" data-i18n-placeholder="bookNamePlaceholder">
-        <label data-i18n="authorLabel">مين اللي كتبه؟:</label>
-        <input type="text" id="authorInput" placeholder="اسم المؤلف (لو مش عارف اكتب 'واحد معرفوش')" data-i18n-placeholder="authorPlaceholder">
-        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px">
-            <div>
-                <label data-i18n="categoryLabel">نوعه إيه؟:</label>
-                <select id="selectedCat"><option value="كتب" data-i18n="booksCat">كتب</option><option value="روايات" data-i18n="novelsCat">روايات</option><option value="ملخصات" data-i18n="summariesCat">ملخصات</option><option value="أخرى" data-i18n="othersCat">كوكتيل</option></select>
-            </div>
-            <div>
-                <label data-i18n="ratingLabel">يستاهل كام؟:</label>
-                <select id="bookRatingInput">
-                    <option value="5" data-i18n="rating5">⭐⭐⭐⭐⭐ عالمي</option><option value="4" data-i18n="rating4">⭐⭐⭐⭐ جامد</option><option value="3" data-i18n="rating3">⭐⭐⭐ شغال</option><option value="2" data-i18n="rating2">⭐⭐ مش قد كدة</option><option value="1" data-i18n="rating1">⭐ يضيع الوقت</option>
-                </select>
-            </div>
-        </div>
-        <label data-i18n="descLabel">كلمتين في حق الكتاب:</label>
-        <textarea id="bookDescInput" rows="3" placeholder="احكي باختصار..." data-i18n-placeholder="descPlaceholder"></textarea>
-        <button class="btn" id="confirmUploadBtn" data-i18n="confirmUpload">طير الكتاب للمكتبة 🚀</button>
-        <button class="btn" style="background:#333; margin-top:10px" onclick="playAudio('click'); closeModals()" data-i18n="cancel">كنسل يا عم</button>
-    </div></div>
-
-    <div id="editModal" class="modal"><div class="modal-box">
-        <h4 style="color:var(--primary)" data-i18n="editTitle">عدل براحتك</h4>
-        <input type="hidden" id="editBookId">
-        <label data-i18n="bookNameLabel">اسم الكتاب:</label>
-        <input type="text" id="editName">
-        <label data-i18n="authorLabel">المؤلف:</label>
-        <input type="text" id="editAuthor">
-        <label data-i18n="categoryLabel">التصنيف:</label>
-        <select id="editCat"><option value="كتب" data-i18n="booksCat">كتب</option><option value="روايات" data-i18n="novelsCat">روايات</option><option value="ملخصات" data-i18n="summariesCat">ملخصات</option><option value="أخرى" data-i18n="othersCat">كوكتيل</option></select>
-        <label data-i18n="descLabel">الوصف:</label>
-        <textarea id="editDesc" rows="3"></textarea>
-        <button class="btn" onclick="saveEdit()" data-i18n="saveEdit">سيف التعديلات 💾</button>
-        <button class="btn" style="background:#333; margin-top:10px" onclick="closeModals()" data-i18n="cancelEdit">خلاص مش معدل</button>
-    </div></div>
-
-    <div id="binModal" class="modal"><div class="modal-box">
-        <h4 style="color:var(--danger)" data-i18n="binTitle">مكب النفايات 🗑️</h4>
-        <div id="binList"></div>
-        <button class="btn" style="background:var(--danger)" onclick="emptyBin()" data-i18n="emptyBin">فرمتة (حذف الكل)</button>
-        <button class="btn" style="background:#333; margin-top:10px" onclick="playAudio('click'); closeModals()" data-i18n="closeBin">اقفل الريحة طالعة 😷</button>
-    </div></div>
-
-    <div id="downloadModal" class="modal"><div class="modal-box">
-        <h4 style="color:var(--primary); margin-top:0" data-i18n="chooseLibrary">اختر المكتبة</h4>
-        <button class="btn" onclick="window.open('https://www.noor-book.com/', '_blank')" data-i18n="noorLibrary">مكتبة نور</button>
-        <button class="btn" style="margin-top:10px" onclick="window.open('https://www.kotobati.com/', '_blank')" data-i18n="kotobatiLibrary">مكتبة كتوباتي</button>
-        <button class="btn" style="background:#333; margin-top:10px" onclick="playAudio('click'); closeModals()" data-i18n="close">إغلاق</button>
-    </div></div>
-
-    <div id="pdfModal" class="modal" style="display: none; align-items: center; justify-content: center;">
-        <div class="modal-box" style="width: 90%; max-width: 1200px; height: 90vh; padding: 0; position: relative;">
-            <button style="position: absolute; top: 10px; right: 10px; z-index: 10; background: var(--danger); color: white; border: none; padding: 5px 10px; border-radius: 5px;" onclick="closeModals()">إغلاق</button>
-            <object id="pdfObject" type="application/pdf" style="width: 100%; height: 100%;"></object>
-        </div>
-    </div>
-
-    <div id="toast"></div>
-
-    <div class="footer" data-i18n="footer">صنع بكل روقان بواسطة Ziad Library Pro &copy; 2026 ☕</div>
-
-    <script>
-        // إعدادات شاشة البداية
-        window.addEventListener('load', () => {
-            const splash = document.getElementById('splash-screen');
-            setTimeout(() => {
-                splash.classList.add('fade-out');
-            }, 3000);
-        });
-
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                const swCode = `
-                    const CACHE_NAME = 'ziad-lib-v1';
-                    self.addEventListener('install', e => e.waitUntil(caches.open(CACHE_NAME).then(c => c.addAll(['/']))));
-                    self.addEventListener('fetch', e => e.respondWith(caches.match(e.request).then(r => r || fetch(e.request))));
-                `;
-                const blob = new Blob([swCode], { type: 'text/javascript' });
-                const swUrl = URL.createObjectURL(blob);
-                navigator.serviceWorker.register(swUrl).catch(console.error);
-            });
-        }
-        
-        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js';
-        
-        const sounds = {
-            click: "https://assets.mixkit.co/active_storage/sfx/2568/2568-preview.mp3",
-            success: "https://assets.mixkit.co/active_storage/sfx/1435/1435-preview.mp3",
-            trash: "https://assets.mixkit.co/active_storage/sfx/2570/2570-preview.mp3",
-            error: "https://assets.mixkit.co/active_storage/sfx/2572/2572-preview.mp3",
-            popup: "https://assets.mixkit.co/active_storage/sfx/2580/2580-preview.mp3",
-            engine: "https://assets.mixkit.co/active_storage/sfx/876/876-preview.mp3"
-        };
-        
-        function playAudio(type) {
-            const audio = new Audio(sounds[type]);
-            audio.volume = 0.5;
-            audio.play().catch(e => console.log("Audio blocked"));
-        }
-        
-        const translations = {
-            'ar-EG': {
-                title: 'مكتبة زياد - الروقان كله 2026 ☕',
-                floatingBadge: 'Ziad البابا 😎',
-                downloadBooks: '📚 تنزيل كتب',
-                settings: '⚙️ تظبيط المسائل',
-                toggleTheme: 'تبديل الوضع 🌗',
-                ziadName: 'Ziad Library VIP',
-                welcomeTitle: 'مكتبتك الخاصة بكلمة مرورك',
-                welcomeDesc: 'هذه مكتبة شخصية لإدارة كتبك الإلكترونية بأمان وروقان.',
-                createPassword: 'انشي كلمة المرور',
-                startNoPassword: 'ابدا بدون كلمة مرور',
-                loginTitle: 'خش برجلك اليمين يا معلم 🦵',
-                loginDesc: 'شكلك أول مرة تشرفنا، اعملك كلمة سر عشان محدش يفتش في كتبك:',
-                passwordPlaceholder: 'كلمة السر يا شقيق',
-                secQuestionPlaceholder: 'سؤال الأمان (مثل: طولك كام؟)',
-                secAnswerPlaceholder: 'إجابة الأمان (افتكرها كويس)',
-                loginBtn: 'افتح يا سمسم 🔓',
-                forgotPass: 'نسيت الباسورد؟ كبر دماغك ودوس هنا',
-                contactUs: 'تواصل معنا 📞',
-                aboutUs: 'لمحة عنا ℹ️',
-                forgotTitle: 'نسيت ولا إيه؟ 🤔',
-                secQuestionText: 'سؤال الأمان: ',
-                secAnsPlaceholder: 'اكتب الإجابة هنا',
-                proceed: 'يلا بينا',
-                back: 'ارجع يا مجنون',
-                storage: '💾 المخزن: ',
-                bin: '🗑️ الزبالة ',
-                export: '📤 خد نسخة (تصدير)',
-                import: '📥 رجع النسخة (استيراد)',
-                searchPlaceholder: '🔍 بتدور على إيه يا غالي؟',
-                allCategories: '📁 كله على بعضه',
-                booksCat: '📚 كتب جد',
-                novelsCat: '🎭 روايات وحكايات',
-                summariesCat: '📝 برشامة الامتحانات',
-                othersCat: '✨ حاجات تانية',
-                sortNew: '🕒 لسه واصل',
-                sortAz: '🔤 من الألف للياء',
-                uploadBtn: '➕ ارفع يا نجم',
-                settingsTitle: 'تظبيط المسائل ⚙️',
-                themeLabel: 'الروقان والألوان:',
-                darkTheme: 'ضلمة (للعظماء)',
-                lightTheme: 'نور (يعمي العين)',
-                purpleTheme: 'بنفسجي (روقان)',
-                forestTheme: 'غابة (طبيعة)',
-                sunsetTheme: 'غروب (رومانسي)',
-                goldTheme: 'دهبي (يا باشا)',
-                languageLabel: 'تغيير اللغة:',
-                egyptianArabic: 'العربية المصرية',
-                standardArabic: 'العربية الفصحى',
-                english: 'English',
-                changePass: 'غير كلمة السر 🔑',
-                deleteAll: 'احذف كله 🗑️',
-                close: 'فكك (إغلاق)',
-                changePassTitle: 'غير كلمة السر وسؤال الأمان',
-                newPassLabel: 'كلمة السر الجديدة:',
-                newPassPlaceholder: 'اكتب كلمة السر الجديدة',
-                newSecQLabel: 'سؤال الأمان الجديد:',
-                newSecQPlaceholder: 'سؤال الأمان الجديد (مثل: طولك كام؟)',
-                newSecALabel: 'إجابة الأمان الجديدة:',
-                newSecAPlaceholder: 'إجابة الأمان الجديدة',
-                saveChanges: 'اعتمد التغييرات 👌',
-                aboutTitle: 'لمحة عنا',
-                aboutDesc: 'ده موقع مكتبة زياد، الروقان كله 2026 ☕، عشان تدير كتبك الإلكترونية بأمان وسهولة يا معلم. هنا تقدر ترفع كتبك الـ PDF، تصنفها، تبحث فيها، تقراها، وتحملها زي ما انت عايز. المكتبة دي شخصية تمامًا، مع كلمة مرور عشان محدش يفتش في حاجاتك، وفيها خاصية تصدير واستيراد البيانات عشان تنقل كتبك بسهولة. كمان فيها سلة مهملات عشان لو غلطت في حذف حاجة تقدر ترجعها، وتغيير الثيمات عشان تريح عيونك. كل ده مصمم بأحدث التقنيات عشان يشتغل آفلاين كمان زي الـ PWA. من صنع وإعداد زياد الدريني، يا ريس!',
-                contactTitle: 'تواصل معنا 📬',
-                phoneWhatsapp: 'اتصال/واتساب',
-                call: 'اتصال',
-                whatsapp: 'واتساب',
-                facebook: 'فيسبوك',
-                visitPage: 'زيارة الصفحة',
-                instagram: 'إنستغرام',
-                instagramBtn: 'إنستغرام',
-                uploadTitle: 'هات ما عندك يا مبدع',
-                bookNameLabel: 'اسم الكتاب (عشان متتوهش):',
-                bookNamePlaceholder: 'اكتب الاسم هنا',
-                authorLabel: 'مين اللي كتبه؟:',
-                authorPlaceholder: "اسم المؤلف (لو مش عارف اكتب 'واحد معرفوش')",
-                categoryLabel: 'نوعه إيه؟:',
-                ratingLabel: 'يستاهل كام؟:',
-                rating5: '⭐⭐⭐⭐⭐ عالمي',
-                rating4: '⭐⭐⭐⭐ جامد',
-                rating3: '⭐⭐⭐ شغال',
-                rating2: '⭐⭐ مش قد كدة',
-                rating1: '⭐ يضيع الوقت',
-                descLabel: 'كلمتين في حق الكتاب:',
-                descPlaceholder: 'احكي باختصار...',
-                confirmUpload: 'طير الكتاب للمكتبة 🚀',
-                cancel: 'كنسل يا عم',
-                editTitle: 'عدل براحتك',
-                saveEdit: 'سيف التعديلات 💾',
-                cancelEdit: 'خلاص مش معدل',
-                binTitle: 'مكب النفايات 🗑️',
-                emptyBin: 'فرمتة (حذف الكل)',
-                closeBin: 'اقفل الريحة طالعة 😷',
-                chooseLibrary: 'اختر المكتبة',
-                noorLibrary: 'مكتبة نور',
-                kotobatiLibrary: 'مكتبة كتوباتي',
-                footer: 'صنع بكل روقان بواسطة Ziad Library Pro &copy; 2026 ☕'
-            },
-            'ar': {
-                title: 'مكتبة زياد - الراحة كلها 2026 ☕',
-                floatingBadge: 'زياد الأب 😎',
-                downloadBooks: '📚 تنزيل كتب',
-                settings: '⚙️ إعدادات',
-                toggleTheme: 'تبديل الوضع 🌗',
-                ziadName: 'مكتبة زياد VIP',
-                welcomeTitle: 'مكتبتك الخاصة بكلمة مرور',
-                welcomeDesc: 'هذه مكتبة شخصية لإدارة كتبك الإلكترونية بأمان وراحة.',
-                createPassword: 'إنشاء كلمة المرور',
-                startNoPassword: 'ابدأ بدون كلمة مرور',
-                loginTitle: 'ادخل بقدمك اليمنى أيها السيد 🦵',
-                loginDesc: 'يبدو أنها المرة الأولى، أنشئ كلمة مرور لمنع الآخرين من الوصول إلى كتبك:',
-                passwordPlaceholder: 'كلمة المرور',
-                secQuestionPlaceholder: 'سؤال الأمان (مثل: ما طولك؟)',
-                secAnswerPlaceholder: 'إجابة الأمان (تذكرها جيدا)',
-                loginBtn: 'افتح يا سمسم 🔓',
-                forgotPass: 'نسيت كلمة المرور؟ اضغط هنا',
-                contactUs: 'تواصل معنا 📞',
-                aboutUs: 'نبذة عنا ℹ️',
-                forgotTitle: 'نسيت أم ماذا؟ 🤔',
-                secQuestionText: 'سؤال الأمان: ',
-                secAnsPlaceholder: 'اكتب الإجابة هنا',
-                proceed: 'لنذهب',
-                back: 'ارجع',
-                storage: '💾 التخزين: ',
-                bin: '🗑️ سلة المهملات ',
-                export: '📤 تصدير البيانات',
-                import: '📥 استيراد البيانات',
-                searchPlaceholder: '🔍 ما الذي تبحث عنه؟',
-                allCategories: '📁 جميع الفئات',
-                booksCat: '📚 كتب',
-                novelsCat: '🎭 روايات',
-                summariesCat: '📝 ملخصات',
-                othersCat: '✨ أخرى',
-                sortNew: '🕒 الأحدث',
-                sortAz: '🔤 من الألف إلى الياء',
-                uploadBtn: '➕ رفع كتاب',
-                settingsTitle: 'الإعدادات ⚙️',
-                themeLabel: 'الثيمات:',
-                darkTheme: 'داكن',
-                lightTheme: 'فاتح',
-                purpleTheme: 'بنفسجي',
-                forestTheme: 'غابة',
-                sunsetTheme: 'غروب',
-                goldTheme: 'ذهبي',
-                languageLabel: 'تغيير اللغة:',
-                egyptianArabic: 'العربية المصرية',
-                standardArabic: 'العربية الفصحى',
-                english: 'English',
-                changePass: 'تغيير كلمة المرور 🔑',
-                deleteAll: 'حذف الكل 🗑️',
-                close: 'إغلاق',
-                changePassTitle: 'تغيير كلمة المرور وسؤال الأمان',
-                newPassLabel: 'كلمة المرور الجديدة:',
-                newPassPlaceholder: 'اكتب كلمة المرور الجديدة',
-                newSecQLabel: 'سؤال الأمان الجديد:',
-                newSecQPlaceholder: 'سؤال الأمان الجديد (مثل: ما طولك؟)',
-                newSecALabel: 'إجابة الأمان الجديدة:',
-                newSecAPlaceholder: 'إجابة الأمان الجديدة',
-                saveChanges: 'حفظ التغييرات 👌',
-                aboutTitle: 'نبذة عنا',
-                aboutDesc: 'هذا موقع مكتبة زياد، الراحة كلها 2026 ☕، لإدارة كتبك الإلكترونية بأمان وسهولة. هنا يمكنك رفع كتب PDF، تصنيفها، البحث فيها، قراءتها، وتنزيلها. المكتبة شخصية تماما، مع كلمة مرور للحماية، وخاصية تصدير واستيراد البيانات. كما تحتوي على سلة مهملات لاستعادة المحذوفات، وتغيير الثيمات. مصمم بأحدث التقنيات للعمل دون إنترنت كـ PWA. من صنع زياد الدريني.',
-                contactTitle: 'تواصل معنا 📬',
-                phoneWhatsapp: 'اتصال/واتساب',
-                call: 'اتصال',
-                whatsapp: 'واتساب',
-                facebook: 'فيسبوك',
-                visitPage: 'زيارة الصفحة',
-                instagram: 'إنستغرام',
-                instagramBtn: 'إنستغرام',
-                uploadTitle: 'أضف ما لديك',
-                bookNameLabel: 'اسم الكتاب:',
-                bookNamePlaceholder: 'اكتب الاسم هنا',
-                authorLabel: 'المؤلف:',
-                authorPlaceholder: 'اسم المؤلف (إذا لم تعرف اكتب \'غير معروف\')',
-                categoryLabel: 'الفئة:',
-                ratingLabel: 'التقييم:',
-                rating5: '⭐⭐⭐⭐⭐ ممتاز',
-                rating4: '⭐⭐⭐⭐ جيد جدا',
-                rating3: '⭐⭐⭐ جيد',
-                rating2: '⭐⭐ متوسط',
-                rating1: '⭐ ضعيف',
-                descLabel: 'وصف مختصر:',
-                descPlaceholder: 'اكتب وصفا مختصرا...',
-                confirmUpload: 'أضف الكتاب إلى المكتبة 🚀',
-                cancel: 'إلغاء',
-                editTitle: 'تعديل',
-                saveEdit: 'حفظ التعديلات 💾',
-                cancelEdit: 'إلغاء التعديل',
-                binTitle: 'سلة المهملات 🗑️',
-                emptyBin: 'حذف الكل',
-                closeBin: 'إغلاق',
-                chooseLibrary: 'اختر المكتبة',
-                noorLibrary: 'مكتبة نور',
-                kotobatiLibrary: 'مكتبة كتوباتي',
-                footer: 'صنع براحة بواسطة Ziad Library Pro &copy; 2026 ☕'
-            },
-            'en': {
-                title: 'Ziad Library - All Chill 2026 ☕',
-                floatingBadge: 'Ziad the Boss 😎',
-                downloadBooks: '📚 Download Books',
-                settings: '⚙️ Settings',
-                toggleTheme: 'Toggle Mode 🌗',
-                ziadName: 'Ziad Library VIP',
-                welcomeTitle: 'Your Private Library with Password',
-                welcomeDesc: 'This is a personal library for managing your e-books securely and easily.',
-                createPassword: 'Create Password',
-                startNoPassword: 'Start Without Password',
-                loginTitle: 'Enter with Your Right Foot, Sir 🦵',
-                loginDesc: 'Seems like first time, create a password to protect your books:',
-                passwordPlaceholder: 'Password',
-                secQuestionPlaceholder: 'Security Question (e.g., How tall are you?)',
-                secAnswerPlaceholder: 'Security Answer (Remember it well)',
-                loginBtn: 'Open Sesame 🔓',
-                forgotPass: 'Forgot Password? Click here',
-                contactUs: 'Contact Us 📞',
-                aboutUs: 'About Us ℹ️',
-                forgotTitle: 'Forgot or what? 🤔',
-                secQuestionText: 'Security Question: ',
-                secAnsPlaceholder: 'Enter the answer here',
-                proceed: 'Let\'s Go',
-                back: 'Go Back',
-                storage: '💾 Storage: ',
-                bin: '🗑️ Trash ',
-                export: '📤 Export Data',
-                import: '📥 Import Data',
-                searchPlaceholder: '🔍 What are you looking for?',
-                allCategories: '📁 All Categories',
-                booksCat: '📚 Books',
-                novelsCat: '🎭 Novels',
-                summariesCat: '📝 Summaries',
-                othersCat: '✨ Others',
-                sortNew: '🕒 Newest',
-                sortAz: '🔤 A to Z',
-                uploadBtn: '➕ Upload Book',
-                settingsTitle: 'Settings ⚙️',
-                themeLabel: 'Themes:',
-                darkTheme: 'Dark',
-                lightTheme: 'Light',
-                purpleTheme: 'Purple',
-                forestTheme: 'Forest',
-                sunsetTheme: 'Sunset',
-                goldTheme: 'Gold',
-                languageLabel: 'Change Language:',
-                egyptianArabic: 'Egyptian Arabic',
-                standardArabic: 'Standard Arabic',
-                english: 'English',
-                changePass: 'Change Password 🔑',
-                deleteAll: 'Delete All 🗑️',
-                close: 'Close',
-                changePassTitle: 'Change Password and Security Question',
-                newPassLabel: 'New Password:',
-                newPassPlaceholder: 'Enter new password',
-                newSecQLabel: 'New Security Question:',
-                newSecQPlaceholder: 'New security question (e.g., How tall are you?)',
-                newSecALabel: 'New Security Answer:',
-                newSecAPlaceholder: 'New security answer',
-                saveChanges: 'Save Changes 👌',
-                aboutTitle: 'About Us',
-                aboutDesc: 'This is Ziad Library site, all chill 2026 ☕, to manage your e-books securely and easily. Upload PDF books, categorize, search, read, and download them. Fully personal with password protection, export/import features. Has trash bin for recovery, theme changes. Designed with latest tech for offline PWA. Made by Ziad Eldreeny.',
-                contactTitle: 'Contact Us 📬',
-                phoneWhatsapp: 'Call/WhatsApp',
-                call: 'Call',
-                whatsapp: 'WhatsApp',
-                facebook: 'Facebook',
-                visitPage: 'Visit Page',
-                instagram: 'Instagram',
-                instagramBtn: 'Instagram',
-                uploadTitle: 'Add What You Have',
-                bookNameLabel: 'Book Name:',
-                bookNamePlaceholder: 'Enter name here',
-                authorLabel: 'Author:',
-                authorPlaceholder: 'Author name (if unknown, write \'Unknown\')',
-                categoryLabel: 'Category:',
-                ratingLabel: 'Rating:',
-                rating5: '⭐⭐⭐⭐⭐ Excellent',
-                rating4: '⭐⭐⭐⭐ Very Good',
-                rating3: '⭐⭐⭐ Good',
-                rating2: '⭐⭐ Average',
-                rating1: '⭐ Poor',
-                descLabel: 'Short Description:',
-                descPlaceholder: 'Write a short description...',
-                confirmUpload: 'Add Book to Library 🚀',
-                cancel: 'Cancel',
-                editTitle: 'Edit',
-                saveEdit: 'Save Edits 💾',
-                cancelEdit: 'Cancel Edit',
-                binTitle: 'Trash Bin 🗑️',
-                emptyBin: 'Empty (Delete All)',
-                closeBin: 'Close',
-                chooseLibrary: 'Choose Library',
-                noorLibrary: 'Noor Library',
-                kotobatiLibrary: 'Kotobati Library',
-                footer: 'Made with Chill by Ziad Library Pro &copy; 2026 ☕'
-            }
-        };
-        
-        let db;
-        let currentPass = localStorage.getItem('ziadPass');
-        let secQuestion = localStorage.getItem('ziadSecQuestion');
-        let secAnswer = localStorage.getItem('ziadSecAnswer');
-        let pendingFile = null;
-        
-        function init() {
-            // Request persistent storage for unlimited quota
-            if (navigator.storage && navigator.storage.persist) {
-                navigator.storage.persist().then(granted => {
-                    console.log("Persistent storage granted:", granted);
-                });
-            }
-
-            const lang = localStorage.getItem('ziadLang') || 'ar-EG';
-            document.body.setAttribute('data-lang', lang);
-            if (lang === 'en') {
-                document.documentElement.lang = 'en';
-                document.documentElement.dir = 'ltr';
-            } else {
-                document.documentElement.lang = 'ar';
-                document.documentElement.dir = 'rtl';
-            }
-            applyTranslations(lang);
-            
-            const theme = localStorage.getItem('ziadTheme') || 'dark';
-            document.body.setAttribute('data-theme', theme);
-            const mode = localStorage.getItem('ziadMode');
-            if (!mode) {
-                showPage('welcomePage');
-            } else if (mode === 'noPassword') {
-                enterLibrary();
-            } else {
-                showPage('loginPage');
-                checkFirstVisit();
-            }
-        }
-        
-        function applyTranslations(lang) {
-            document.querySelectorAll('[data-i18n]').forEach(el => {
-                const key = el.getAttribute('data-i18n');
-                if (translations[lang][key]) {
-                    el.innerText = translations[lang][key];
-                }
-            });
-            document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
-                const key = el.getAttribute('data-i18n-placeholder');
-                if (translations[lang][key]) {
-                    el.placeholder = translations[lang][key];
-                }
-            });
-            document.querySelectorAll('select option[data-i18n]').forEach(opt => {
-                const key = opt.getAttribute('data-i18n');
-                if (translations[lang][key]) {
-                    opt.innerText = translations[lang][key];
-                }
-            });
-        }
-        
-        function setLanguage(val) {
-            localStorage.setItem('ziadLang', val);
-            location.reload(); 
-        }
-        
-        function checkFirstVisit() {
-            const title = document.getElementById('loginTitle');
-            const desc = document.getElementById('loginDesc');
-            const btn = document.getElementById('loginBtn');
-            const forgot = document.getElementById('forgotPassLink');
-            const secSetup = document.getElementById('secSetup');
-            if (!currentPass) {
-                title.innerText = translations[document.body.getAttribute('data-lang')].loginTitle; 
-                desc.style.display = "block";
-                btn.innerText = translations[document.body.getAttribute('data-lang')].loginBtn;
-                forgot.style.display = "none";
-                secSetup.style.display = "block";
-            } else {
-                secSetup.style.display = "none";
-            }
-        }
-        
-        function handleAuth() {
-            const inputVal = document.getElementById('passIn').value;
-            if (!inputVal) {
-                showToast(translations[document.body.getAttribute('data-lang')].errorEmpty);
-                return;
-            }
-            if (!currentPass) {
-                const newSecQuestion = document.getElementById('secQuestion').value;
-                const newSecAnswer = document.getElementById('secAnswer').value;
-                if (!newSecQuestion || !newSecAnswer) {
-                    showToast(translations[document.body.getAttribute('data-lang')].errorSec);
-                    return;
-                }
-                localStorage.setItem('ziadPass', inputVal);
-                localStorage.setItem('ziadSecQuestion', newSecQuestion);
-                localStorage.setItem('ziadSecAnswer', newSecAnswer);
-                currentPass = inputVal;
-                secQuestion = newSecQuestion;
-                secAnswer = newSecAnswer;
-                playAudio('success');
-                showToast(translations[document.body.getAttribute('data-lang')].welcomeMsg);
-                enterLibrary();
-            } else {
-                if (inputVal === currentPass) {
-                    enterLibrary();
-                } else {
-                    playAudio('error');
-                    showToast(translations[document.body.getAttribute('data-lang')].errorWrongPass);
-                }
-            }
-        }
-        
-        function enterLibrary() {
-            playAudio('engine');
-            showPage('libraryContent');
-            render();
-            showToast(translations[document.body.getAttribute('data-lang')].libraryWelcome);
-        }
-        
-        function setTheme(val) {
-            localStorage.setItem('ziadTheme', val);
-            document.body.setAttribute('data-theme', val);
-        }
-        
-        function toggleTheme() {
-            const current = document.body.getAttribute('data-theme');
-            const newTheme = current === 'dark' ? 'light' : 'dark';
-            setTheme(newTheme);
-        }
-        
-        function openSettings() { playAudio('popup'); document.getElementById('settingsModal').style.display='block'; }
-        
-        function openDownloadModal() { playAudio('popup'); document.getElementById('downloadModal').style.display='block'; }
-        
-        function openContactModal() { playAudio('popup'); document.getElementById('contactModal').style.display='block'; }
-        
-        function openAboutModal() { playAudio('popup'); document.getElementById('aboutModal').style.display='block'; }
-        
-        function openChangePassModal() { playAudio('popup'); document.getElementById('changePassModal').style.display='block'; }
-        
-        function saveNewPassAndSec() {
-            const np = document.getElementById('newPassInput').value;
-            const nsq = document.getElementById('newSecQuestion').value;
-            const nsa = document.getElementById('newSecAnswer').value;
-            if (np && nsq && nsa) {
-                localStorage.setItem('ziadPass', np);
-                localStorage.setItem('ziadSecQuestion', nsq);
-                localStorage.setItem('ziadSecAnswer', nsa);
-                currentPass = np;
-                secQuestion = nsq;
-                secAnswer = nsa;
-                showToast(translations[document.body.getAttribute('data-lang')].passChanged);
-                closeModals();
-            } else {
-                showToast(translations[document.body.getAttribute('data-lang')].errorFillAll);
-            }
-        }
-        
-        function deleteAllBooks() {
-            if (confirm(translations[document.body.getAttribute('data-lang')].confirmDeleteAll)) {
-                const tx = db.transaction("books", "readwrite");
-                tx.objectStore("books").clear().onsuccess = () => {
-                    render();
-                    updateStats();
-                    showToast(translations[document.body.getAttribute('data-lang')].allDeleted);
-                };
-            }
-        }
-        
-        const req = indexedDB.open("Ziad_Library_Pro_2026", 2);
-        req.onupgradeneeded = (e) => {
-            const d = e.target.result;
-            if(!d.objectStoreNames.contains("books")) d.createObjectStore("books", {keyPath: "id", autoIncrement: true});
-            if(!d.objectStoreNames.contains("bin")) d.createObjectStore("bin", {keyPath: "id", autoIncrement: true});
-        };
-        req.onsuccess = (e) => { 
-            db = e.target.result; 
-            updateStats();
-        };
-        
-        function showToast(m) {
-            const t = document.getElementById('toast'); t.innerText = m;
-            t.style.display = 'block'; setTimeout(() => t.style.display = 'none', 3000);
-        }
-        
-        function showPage(id) {
-            ['welcomePage', 'loginPage', 'secPage', 'libraryContent'].forEach(p => document.getElementById(p).style.display = 'none');
-            document.getElementById(id).style.display = 'block';
-            const sBtn = document.getElementById('settingsBtn');
-            const dBtn = document.getElementById('downloadBtn');
-            const tToggle = document.getElementById('themeToggle');
-            const fBadge = document.getElementById('floatingBadge');
-            if (id === 'libraryContent') { sBtn.style.display = 'block'; dBtn.style.display = 'block'; tToggle.style.display = 'block'; fBadge.style.display = 'block'; }
-            else { sBtn.style.display = 'none'; dBtn.style.display = 'none'; tToggle.style.display = 'none'; fBadge.style.display = 'none'; }
-            if (id === 'secPage') {
-                document.getElementById('secQuestionText').innerText = translations[document.body.getAttribute('data-lang')].secQuestionText + (secQuestion || translations[document.body.getAttribute('data-lang')].defaultSecQ);
-            }
-        }
-        
-        function checkSec() {
-            const inputAnswer = document.getElementById('secAns').value;
-            if(inputAnswer === secAnswer) {
-                playAudio('engine');
-                showPage('libraryContent'); 
-                showToast(translations[document.body.getAttribute('data-lang')].secSuccess); 
-                render();
-            } else {
-                playAudio('error');
-                showToast(translations[document.body.getAttribute('data-lang')].secError);
-            }
-        }
-        
-        function closeModals() { 
-            document.querySelectorAll('.modal').forEach(m => m.style.display='none'); 
-        }
-        
-        function upload(e) {
-            pendingFile = e.target.files[0];
-            if(!pendingFile) return;
-            playAudio('popup');
-            document.getElementById('pendingFileName').innerText = pendingFile.name;
-            document.getElementById('bookNameInput').value = pendingFile.name.replace('.pdf','');
-            document.getElementById('uploadModal').style.display = 'block';
-        }
-        
-        document.getElementById('confirmUploadBtn').onclick = async () => {
-            const name = document.getElementById('bookNameInput').value;
-            const author = document.getElementById('authorInput').value || translations[document.body.getAttribute('data-lang')].defaultAuthor;
-            const cat = document.getElementById('selectedCat').value;
-            const desc = document.getElementById('bookDescInput').value || translations[document.body.getAttribute('data-lang')].defaultDesc;
-            const rating = document.getElementById('bookRatingInput').value;
-            const file = pendingFile;
-            
-            closeModals();
-            showToast(translations[document.body.getAttribute('data-lang')].uploading);
-            
-            const r = new FileReader();
-            r.onload = async (ev) => {
-                const pdfData = ev.target.result;
-                const pdfInfo = await getPdfInfo(pdfData);
-                
-                const tx = db.transaction("books", "readwrite");
-                const store = tx.objectStore("books");
-                const request = store.add({ 
-                    name: name, author: author, data: pdfData, thumb: pdfInfo.thumb, 
-                    pages: pdfInfo.pages, size: file.size, category: cat,
-                    description: desc, rating: rating, date: new Date().toLocaleDateString('ar-EG') 
-                });
-
-                // إضافة التنبيه لو مساحة الجهاز الفعلية خلصت
-                request.onerror = (e) => {
-                    playAudio('error');
-                    showToast(translations[document.body.getAttribute('data-lang')].storageFullError);
-                    console.error("Storage Error:", e);
-                };
-
-                tx.oncomplete = () => { 
-                    playAudio('success'); render(); updateStats(); showToast(translations[document.body.getAttribute('data-lang')].uploadSuccess); 
-                    document.getElementById('bookDescInput').value = ''; document.getElementById('authorInput').value = '';
-                };
-            };
-            r.readAsArrayBuffer(file);
-        };
-        
-        async function getPdfInfo(data) {
-            try {
-                const pdf = await pdfjsLib.getDocument({data: data}).promise;
-                const page = await pdf.getPage(1);
-                const canv = document.createElement('canvas');
-                const view = page.getViewport({scale: 0.3});
-                canv.width = view.width; canv.height = view.height;
-                await page.render({canvasContext: canv.getContext('2d'), viewport: view}).promise;
-                return { thumb: canv.toDataURL('image/jpeg', 0.6), pages: pdf.numPages };
-            } catch { return { thumb: '', pages: 0 }; }
-        }
-        
-        function render() {
-            const g = document.getElementById('grid');
-            const q = document.getElementById('search').value.toLowerCase();
-            const s = document.getElementById('sort').value;
-            const cf = document.getElementById('catFilter').value;
-            g.innerHTML = "";
-            
-            const tx = db.transaction("books", "readonly");
-            let books = [];
-            tx.objectStore("books").openCursor().onsuccess = (e) => {
-                const c = e.target.result;
-                if(c) { 
-                    const v = c.value;
-                    if((v.name.toLowerCase().includes(q) || (v.author && v.author.toLowerCase().includes(q))) && (cf === 'all' || v.category === cf)) books.push(v); 
-                    c.continue(); 
-                } else {
-                    books.sort((a,b) => s === 'az' ? a.name.localeCompare(b.name) : b.id - a.id);
-                    books.forEach(b => {
-                        const d = document.createElement('div'); d.className = 'card';
-                        d.innerHTML = `
-                            <div class="card-tag">${b.category || translations[document.body.getAttribute('data-lang')].defaultCat}</div>
-                            <img src="${b.thumb || 'https://via.placeholder.com/150'}" class="preview" onclick="openPdf(${b.id})">
-                            <div class="book-title">${b.name}</div>
-                            <div class="book-author">👤 ${b.author || translations[document.body.getAttribute('data-lang')].defaultAuthor}</div>
-                            <div class="book-rating">${"⭐".repeat(b.rating || 5)}</div>
-                            <div class="book-meta">${b.pages ? b.pages+' ' + translations[document.body.getAttribute('data-lang')].pages : ''} | ${formatSize(b.size)}</div>
-                            <div class="card-btns">
-                                <button class="btn-s" style="background:var(--primary); color:#000" onclick="openPdf(${b.id})" data-i18n="read">قراءة 📖</button>
-                                <button class="btn-s" style="background:#333" onclick="downB(${b.id})" data-i18n="download">حمل 👇</button>
-                                <button class="btn-s btn-edit" onclick="openEdit(${b.id})" data-i18n="edit">ظبطه ✏️</button>
-                                <button class="btn-s" style="background:var(--danger)" onclick="moveToBin(${b.id})" data-i18n="delete">ارميه 🗑️</button>
-                            </div>`;
-                        g.appendChild(d);
-                    });
-                    applyTranslations(document.body.getAttribute('data-lang')); 
-                }
-            };
-        }
-        
-        function openPdf(id) {
-            db.transaction("books").objectStore("books").get(id).onsuccess = (e) => {
-                const b = e.target.result;
-                const blob = new Blob([b.data], {type: 'application/pdf'});
-                const url = URL.createObjectURL(blob);
-                document.getElementById('pdfObject').data = url;
-                document.getElementById('pdfModal').style.display = 'block';
-            };
-        }
-        
-        function openEdit(id) {
-            db.transaction("books").objectStore("books").get(id).onsuccess = (e) => {
-                const b = e.target.result;
-                document.getElementById('editBookId').value = b.id;
-                document.getElementById('editName').value = b.name;
-                document.getElementById('editAuthor').value = b.author || '';
-                document.getElementById('editCat').value = b.category;
-                document.getElementById('editDesc').value = b.description || '';
-                document.getElementById('editModal').style.display = 'block';
-            };
-        }
-        
-        function saveEdit() {
-            const id = Number(document.getElementById('editBookId').value);
-            const tx = db.transaction("books", "readwrite");
-            const store = tx.objectStore("books");
-            store.get(id).onsuccess = (e) => {
-                const data = e.target.result;
-                data.name = document.getElementById('editName').value;
-                data.author = document.getElementById('editAuthor').value;
-                data.category = document.getElementById('editCat').value;
-                data.description = document.getElementById('editDesc').value;
-                store.put(data);
-                tx.oncomplete = () => { playAudio('success'); closeModals(); render(); showToast(translations[document.body.getAttribute('data-lang')].editSaved); };
-            };
-        }
-        
-        function downB(id) {
-            playAudio('click');
-            showToast(translations[document.body.getAttribute('data-lang')].downloading);
-            db.transaction("books").objectStore("books").get(id).onsuccess = (e) => {
-                const b = e.target.result;
-                const blob = new Blob([b.data], {type: 'application/pdf'});
-                const url = URL.createObjectURL(blob);
-                const a = document.createElement('a'); a.href = url; a.download = b.name + ".pdf"; a.click();
-            };
-        }
-        
-        function moveToBin(id) {
-            playAudio('trash');
-            const tx = db.transaction(["books", "bin"], "readwrite");
-            tx.objectStore("books").get(id).onsuccess = (e) => {
-                tx.objectStore("bin").add(e.target.result);
-                tx.objectStore("books").delete(id);
-                tx.oncomplete = () => { render(); updateStats(); showToast(translations[document.body.getAttribute('data-lang')].movedToBin); };
-            };
-        }
-        
-        function showBin() {
-            const list = document.getElementById('binList'); list.innerHTML = "";
-            document.getElementById('binModal').style.display = 'block';
-            db.transaction("bin").objectStore("bin").openCursor().onsuccess = (e) => {
-                const c = e.target.result;
-                if(c) {
-                    const row = document.createElement('div'); row.style = "display:flex; justify-content:space-between; padding:10px; border-bottom:1px solid #333; align-items:center";
-                    row.innerHTML = `<span style="font-size:0.9rem">${c.value.name}</span> <button class="btn-s" style="background:#198754; padding:5px 10px" onclick="restoreBook(${c.value.id})" data-i18n="restore">${translations[document.body.getAttribute('data-lang')].restore}</button>`;
-                    list.appendChild(row); c.continue();
-                }
-            };
-        }
-        
-        function restoreBook(id) {
-            playAudio('success');
-            const tx = db.transaction(["books", "bin"], "readwrite");
-            tx.objectStore("bin").get(id).onsuccess = (e) => {
-                tx.objectStore("books").add(e.target.result);
-                tx.objectStore("bin").delete(id);
-                tx.oncomplete = () => { showBin(); render(); updateStats(); showToast(translations[document.body.getAttribute('data-lang')].restored); };
-            };
-        }
-        
-        function emptyBin() {
-            if(confirm(translations[document.body.getAttribute('data-lang')].confirmEmptyBin)) {
-                playAudio('trash');
-                db.transaction("bin", "readwrite").objectStore("bin").clear().onsuccess = () => {
-                    closeModals(); updateStats(); showToast(translations[document.body.getAttribute('data-lang')].binEmptied);
-                };
-            }
-        }
-        
-        function updateStats() {
-            let total = 0;
-            const tx = db.transaction(["books", "bin"], "readonly");
-            tx.objectStore("books").openCursor().onsuccess = (e) => {
-                const c = e.target.result;
-                if(c) { total += (c.value.size || 0); c.continue(); }
-                else document.getElementById('totalStorage').innerText = formatSize(total);
-            };
-            tx.objectStore("bin").count().onsuccess = (e) => document.getElementById('binCount').innerText = e.target.result;
-        }
-        
-        function formatSize(bytes) {
-            if(!bytes) return '0 B';
-            const i = Math.floor(Math.log(bytes) / Math.log(1024));
-            return (bytes / Math.pow(1024, i)).toFixed(1) + ' ' + ['B', 'KB', 'MB', 'GB'][i];
-        }
-        
-        // تعديل مهم هنا لعدم استهلاك الرامات في الملفات الكبيرة
-        function arrayBufferToBase64(buffer) {
-            let binary = '';
-            const bytes = new Uint8Array(buffer);
-            const len = bytes.byteLength;
-            const chunkSize = 8192; // تقطيع الملف لأجزاء عشان المتصفح ميهنجش
-            for (let i = 0; i < len; i += chunkSize) {
-                binary += String.fromCharCode.apply(null, bytes.subarray(i, i + chunkSize));
-            }
-            return window.btoa(binary);
-        }
-        
-        function base64ToArrayBuffer(base64) {
-            const binary = window.atob(base64);
-            const bytes = new Uint8Array(binary.length);
-            for (let i = 0; i < binary.length; i++) {
-                bytes[i] = binary.charCodeAt(i);
-            }
-            return bytes.buffer;
-        }
-        
-        function exportData() {
-            const tx = db.transaction("books", "readonly");
-            const data = [];
-            tx.objectStore("books").openCursor().onsuccess = (e) => {
-                const c = e.target.result;
-                if(c) { 
-                    const item = {...c.value, data: arrayBufferToBase64(c.value.data)};
-                    data.push(item); 
-                    c.continue(); 
-                } else {
-                    const a = document.createElement('a');
-                    a.href = URL.createObjectURL(new Blob([JSON.stringify(data)], {type: "application/json"}));
-                    a.download = "Ziad_Library_Backup.json"; a.click();
-                }
-            };
-        }
-        
-        function importData(e) {
-            const reader = new FileReader();
-            reader.onload = (ev) => {
-                const data = JSON.parse(ev.target.result);
-                const tx = db.transaction("books", "readwrite");
-                data.forEach(item => {
-                    item.data = base64ToArrayBuffer(item.data);
-                    tx.objectStore("books").add(item);
-                });
-                tx.oncomplete = () => { playAudio('success'); render(); updateStats(); showToast(translations[document.body.getAttribute('data-lang')].importSuccess); };
-            };
-            reader.readAsText(e.target.files[0]);
-        }
-        
-        function choosePasswordMode() {
-            localStorage.setItem('ziadMode', 'password');
-            showPage('loginPage');
-            checkFirstVisit();
-        }
-        
-        function chooseNoPasswordMode() {
-            localStorage.setItem('ziadMode', 'noPassword');
-            enterLibrary();
-        }
-        
-        const lang = localStorage.getItem('ziadLang') || 'ar-EG';
-        translations[lang].errorEmpty = lang === 'ar-EG' ? "⚠️ اكتب أي حاجة يا عم!" : lang === 'ar' ? "⚠️ يرجى إدخال قيمة!" : "⚠️ Please enter something!";
-        translations[lang].errorSec = lang === 'ar-EG' ? "⚠️ لازم تكتب سؤال أمان وإجابته يا معلم!" : lang === 'ar' ? "⚠️ يجب كتابة سؤال أمان وإجابته!" : "⚠️ Must enter security question and answer!";
-        translations[lang].welcomeMsg = lang === 'ar-EG' ? "✅ أهلا بيك يا ريس في مكتبتك" : lang === 'ar' ? "✅ مرحبا بك في مكتبتك" : "✅ Welcome to your library";
-        translations[lang].errorWrongPass = lang === 'ar-EG' ? "❌ غلط يا زميلي! ركز شوية 😂" : lang === 'ar' ? "❌ خطأ! حاول مرة أخرى" : "❌ Wrong! Try again";
-        translations[lang].libraryWelcome = lang === 'ar-EG' ? "نورت المكتبة يا هندسة 💡" : lang === 'ar' ? "مرحبا في المكتبة" : "Welcome to the library";
-        translations[lang].passChanged = lang === 'ar-EG' ? "✅ غيرنا كلمة السر وسؤال الأمان، اوعى تنساهم بقى!" : lang === 'ar' ? "✅ تم تغيير كلمة المرور وسؤال الأمان" : "✅ Password and security changed";
-        translations[lang].errorFillAll = lang === 'ar-EG' ? "⚠️ لازم تملأ كل الحقول يا معلم!" : lang === 'ar' ? "⚠️ يجب ملء جميع الحقول!" : "⚠️ Fill all fields!";
-        translations[lang].confirmDeleteAll = lang === 'ar-EG' ? "هتحذف كل الكتب بجد؟ مفيش رجعة يا ريس! 😱" : lang === 'ar' ? "هل تريد حذف جميع الكتب؟ لا رجعة!" : "Delete all books? No return!";
-        translations[lang].allDeleted = lang === 'ar-EG' ? "🗑️ بح.. كل الكتب راحت!" : lang === 'ar' ? "🗑️ تم حذف جميع الكتب" : "🗑️ All books deleted";
-        translations[lang].secSuccess = lang === 'ar-EG' ? "أيوه كدة يا وديع! نورت 😂" : lang === 'ar' ? "صحيح! مرحبا" : "Correct! Welcome";
-        translations[lang].secError = lang === 'ar-EG' ? "⚠️ بتفتي ليه؟ غلط!" : lang === 'ar' ? "⚠️ خطأ!" : "⚠️ Wrong!";
-        translations[lang].uploading = lang === 'ar-EG' ? "⏳ اصبر شوية بنحمل الكتاب..." : lang === 'ar' ? "⏳ جاري التحميل..." : "⏳ Uploading...";
-        translations[lang].uploadSuccess = lang === 'ar-EG' ? "✅ الكتاب وصل بالسلامة!" : lang === 'ar' ? "✅ تم إضافة الكتاب" : "✅ Book added";
-        translations[lang].storageFullError = lang === 'ar-EG' ? "⚠️ مساحة جهازك خلصت أو الملف كبير أوي عالمتصفح!" : lang === 'ar' ? "⚠️ مساحة التخزين ممتلئة!" : "⚠️ Storage quota exceeded!";
-        translations[lang].defaultAuthor = lang === 'ar-EG' ? "فاعل خير" : lang === 'ar' ? "غير معروف" : "Unknown";
-        translations[lang].defaultDesc = lang === 'ar-EG' ? "من غير وصف" : lang === 'ar' ? "بدون وصف" : "No description";
-        translations[lang].defaultCat = lang === 'ar-EG' ? "كوكتيل" : lang === 'ar' ? "أخرى" : "Others";
-        translations[lang].pages = lang === 'ar-EG' ? "ورقة" : lang === 'ar' ? "صفحة" : "pages";
-        translations[lang].read = lang === 'ar-EG' ? "قراءة 📖" : lang === 'ar' ? "قراءة 📖" : "Read 📖";
-        translations[lang].download = lang === 'ar-EG' ? "حمل 👇" : lang === 'ar' ? "تنزيل 👇" : "Download 👇";
-        translations[lang].edit = lang === 'ar-EG' ? "ظبطه ✏️" : lang === 'ar' ? "تعديل ✏️" : "Edit ✏️";
-        translations[lang].delete = lang === 'ar-EG' ? "ارميه 🗑️" : lang === 'ar' ? "حذف 🗑️" : "Delete 🗑️";
-        translations[lang].downloading = lang === 'ar-EG' ? "جاري التحميل... استلقاه 📥" : lang === 'ar' ? "جاري التنزيل 📥" : "Downloading 📥";
-        translations[lang].movedToBin = lang === 'ar-EG' ? "🗑️ طيرناه في الزبالة" : lang === 'ar' ? "🗑️ نقل إلى المهملات" : "🗑️ Moved to trash";
-        translations[lang].restore = lang === 'ar-EG' ? "رجعه تاني" : lang === 'ar' ? "استعادة" : "Restore";
-        translations[lang].restored = lang === 'ar-EG' ? "رجعناه ينور المكتبة ✨" : lang === 'ar' ? "تم الاستعادة ✨" : "Restored ✨";
-        translations[lang].confirmEmptyBin = lang === 'ar-EG' ? "هتفرم الكتب دي بجد؟ مفيش رجعة يا معلم! 😱" : lang === 'ar' ? "هل تريد حذف الكل نهائيا؟" : "Delete all permanently?";
-        translations[lang].binEmptied = lang === 'ar-EG' ? "بح.. الزبالة فضيت 🧹" : lang === 'ar' ? "تم تفريغ المهملات 🧹" : "Trash emptied 🧹";
-        translations[lang].editSaved = lang === 'ar-EG' ? "✅ عدلنا وكله تمام يا برنس" : lang === 'ar' ? "✅ تم حفظ التعديلات" : "✅ Edits saved";
-        translations[lang].importSuccess = lang === 'ar-EG' ? "✅ رجعنا الكتب يا وحش" : lang === 'ar' ? "✅ تم استيراد الكتب" : "✅ Books imported";
-        translations[lang].defaultSecQ = lang === 'ar-EG' ? "طولك كام يا عم الطويل؟" : lang === 'ar' ? "ما طولك أيها الطويل؟" : "How tall are you?";
-        
-        init();
-    </script>
-</body>
-</html>
