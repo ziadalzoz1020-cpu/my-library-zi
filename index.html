@@ -13,6 +13,14 @@
     <meta property="og:type" content="website">
     <meta name="twitter:card" content="summary_large_image">
     
+    <!-- دعم PWA لفتح الاختصار في وضع ملء الشاشة (fullscreen) -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Ziad Library">
+    <link rel="apple-touch-icon" href="favicon.png">
+    <meta name="theme-color" content="#050505"> <!-- لون الثيم لشريط العنوان في Android -->
+
     <!-- خطوط المكتبة الأساسية -->
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;600;900&display=swap" rel="stylesheet">
     <!-- خطوط شاشة البداية -->
@@ -1381,7 +1389,6 @@
 
         function openReader(url, title) {
             document.getElementById('pdfModal').style.display = 'block';
-            document.getElementById('reader-filename').innerText = title;
             document.body.style.overflow = 'hidden';
             readingStartTime = Date.now();
             pdfjsLib.getDocument(url).promise.then(pdfDoc_ => {
