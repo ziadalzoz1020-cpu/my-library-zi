@@ -1,0 +1,1636 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مكتبة Ziad Aldriny 2026 - النسخة الاحترافية</title>
+    
+    <link rel="icon" type="image/png" href="favicon.png">
+    
+    <meta property="og:title" content="مكتبة Ziad Aldriny 2026">
+    <meta property="og:description" content="مكتبتي الرقمية المتكاملة للكتب والملخصات">
+    <meta property="og:image" content="social-preview.png">
+    <meta property="og:type" content="website">
+    <meta name="twitter:card" content="summary_large_image">
+    
+    <!-- دعم PWA لفتح الاختصار في وضع ملء الشاشة (fullscreen) -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Ziad Library">
+    <link rel="apple-touch-icon" href="favicon.png">
+    <meta name="theme-color" content="#050505"> <!-- لون الثيم لشريط العنوان في Android -->
+
+    <!-- خطوط المكتبة الأساسية -->
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;600;900&display=swap" rel="stylesheet">
+    <!-- خطوط شاشة البداية -->
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;800&family=Great+Vibes&display=swap" rel="stylesheet">
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    
+    <style>
+        :root {
+            --primary: #00d4ff; --bg: #050505; --card: #0d1117;
+            --text: #ffffff; --border: rgba(255,255,255,0.1); --danger: #ff4d4d;
+            --success: #2ecc71;
+        }
+        [data-theme="light"] { --bg: #f0f2f5; --card: #ffffff; --text: #1a1a1a; --primary: #007bff; --border: rgba(0,0,0,0.1); }
+        [data-theme="purple"] { --bg: #1a0b2e; --card: #2d1454; --text: #ffffff; --primary: #bc13fe; --border: rgba(255,255,255,0.1); }
+        [data-theme="forest"] { --bg: #0a1a0a; --card: #142d14; --text: #ffffff; --primary: #2ecc71; --border: rgba(255,255,255,0.1); }
+        [data-theme="sunset"] { --bg: #1a0f0f; --card: #2d1414; --text: #ffffff; --primary: #e67e22; --border: rgba(255,255,255,0.1); }
+        [data-theme="gold"] { --bg: #11110a; --card: #222214; --text: #ffffff; --primary: #f1c40f; --border: rgba(255,255,255,0.1); }
+        
+        * { box-sizing: border-box; transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        body { font-family: 'Cairo', sans-serif; background: var(--bg); color: var(--text); margin: 0; min-height: 100vh; overflow-x: hidden; }
+        
+        /* ====================== شاشة البداية (Splash Screen) ====================== */
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #050505;
+            overflow: hidden;
+        }
+        #splash-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at center, #1a1a24 0%, #050505 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 10001;
+            transition: opacity 0.8s ease, visibility 0.8s ease;
+        }
+        .gold-text {
+            background: linear-gradient(to right, #bf953f, #fcf6ba, #b38728, #fbf5b7, #aa771c);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0px 4px 15px rgba(212, 175, 55, 0.3);
+        }
+        .top-badge {
+            font-family: 'Cinzel', serif;
+            font-size: 2.2rem;
+            font-weight: 800;
+            margin-bottom: 25px;
+            animation: fadeInDown 1.2s ease forwards;
+            opacity: 0;
+        }
+        .logo-container {
+            width: 200px; 
+            height: 200px;
+            border-radius: 50%;
+            padding: 5px;
+            background: linear-gradient(135deg, #bf953f, #fcf6ba, #aa771c);
+            box-shadow: 0 0 40px rgba(212, 175, 55, 0.5);
+            margin-bottom: 25px;
+            opacity: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            animation: fadeIn 1s ease 0.3s forwards, pulseGlow 2s infinite alternate 1.3s;
+        }
+        .logo-container img {
+            width: 96%;
+            height: 96%;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid #050505;
+        }
+        .library-name {
+            font-family: 'Cinzel', serif;
+            font-size: 3rem;
+            margin: 0;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            opacity: 0;
+            animation: fadeInUp 1.2s ease 0.6s forwards;
+        }
+        .footer-text {
+            position: absolute;
+            bottom: 50px;
+            font-family: 'Great Vibes', cursive;
+            font-size: 1.6rem;
+            color: #d4af37;
+            opacity: 0;
+            animation: fadeIn 1.2s ease 1s forwards;
+        }
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-40px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(40px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes fadeIn {
+            to { opacity: 1; }
+        }
+        @keyframes pulseGlow {
+            from { box-shadow: 0 0 20px rgba(212, 175, 55, 0.4); transform: scale(1); }
+            to { box-shadow: 0 0 50px rgba(212, 175, 55, 0.8); transform: scale(1.03); }
+        }
+        .hide-splash {
+            opacity: 0 !important;
+            visibility: hidden !important;
+        }
+        /* ====================== نهاية شاشة البداية ====================== */
+
+        .floating-badge {
+            position: fixed; bottom: 20px; right: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--primary);
+            color: var(--primary);
+            padding: 10px 20px;
+            border-radius: 50px;
+            font-weight: 900;
+            font-size: 1.1rem;
+            box-shadow: 0 0 20px rgba(0, 212, 255, 0.3);
+            z-index: 9999;
+            animation: pulse 2s infinite, float 3s ease-in-out infinite;
+            display: none;
+        }
+        @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(0,212,255,0.4); } 70% { box-shadow: 0 0 0 15px rgba(0,212,255,0); } 100% { box-shadow: 0 0 0 0 rgba(0,212,255,0); } }
+        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+        
+        #loader { position: fixed; inset: 0; background: linear-gradient(135deg, #000000, #001f3f); display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 10000; opacity: 1; transition: opacity 1s ease-out; }
+        #loader.fade-out { opacity: 0; }
+        .loader-icon-container { position: relative; animation: fadeInUp 1s ease-out; }
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .loader-logo { width: 220px; height: 220px; border-radius: 30px; border: 3px solid var(--primary); box-shadow: 0 0 30px var(--primary), 0 0 60px rgba(0, 212, 255, 0.5); object-fit: cover; animation: pulseGlow 2s infinite; }
+        @keyframes pulseGlow { 0% { box-shadow: 0 0 30px var(--primary), 0 0 60px rgba(0, 212, 255, 0.5); } 50% { box-shadow: 0 0 50px var(--primary), 0 0 80px rgba(0, 212, 255, 0.7); } 100% { box-shadow: 0 0 30px var(--primary), 0 0 60px rgba(0, 212, 255, 0.5); } }
+        .loader-badge { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 2.5rem; font-weight: 900; color: var(--primary); text-shadow: 0 0 15px var(--primary), 0 0 30px rgba(0, 212, 255, 0.7); animation: scalePulse 1.5s infinite; }
+        @keyframes scalePulse { 0%, 100% { transform: translate(-50%, -50%) scale(1); } 50% { transform: translate(-50%, -50%) scale(1.1); } }
+        .loader-title { font-size: 3rem; font-weight: 900; text-shadow: 0 0 20px var(--primary), 0 0 40px rgba(0, 212, 255, 0.5); margin: 30px 0 10px; letter-spacing: 2px; animation: fadeInUp 1s ease-out 0.5s forwards; opacity: 0; }
+        .loader-subtitle { font-size: 1rem; font-style: italic; color: #ccc; text-shadow: 0 0 10px rgba(255,255,255,0.5); font-family: 'Cairo'; opacity: 0; animation: fadeInUp 1s ease-out 1s forwards; }
+        
+        .header { padding: 30px 0; position: relative; display: flex; justify-content: space-between; align-items: center; }
+        #sidebarToggle { position: absolute; top: 15px; left: 15px; z-index: 100; font-size: 1.5rem; background: none; border: none; color: var(--primary); cursor: pointer; display: none; }
+        .user-logo { width: 150px; height: 150px; border-radius: 50%; border: 2px solid var(--primary); box-shadow: 0 0 20px var(--primary); object-fit: cover; }
+        .ziad-name { font-size: 2rem; font-weight: 900; text-shadow: 0 0 15px var(--primary); margin: 0 15px; animation: lightning 1s infinite alternate; }
+        @keyframes lightning {
+            0% { text-shadow: 0 0 15px var(--primary), 0 0 30px rgba(0, 212, 255, 0.7); }
+            50% { text-shadow: 0 0 25px #fff, 0 0 50px rgba(255, 255, 255, 0.8); }
+            100% { text-shadow: 0 0 15px var(--primary), 0 0 30px rgba(0, 212, 255, 0.7); }
+        }
+        .header-logo-container { 
+            display: flex; 
+            align-items: center; 
+            justify-content: flex-start; 
+            flex-grow: 1; 
+        }
+        
+        .glass-panel { background: rgba(255,255,255,0.03); backdrop-filter: blur(15px); border: 1px solid var(--border); border-radius: 25px; padding: 35px; width: 90%; max-width: 400px; margin: 40px auto; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        input, select { width: 100%; padding: 12px; margin: 10px 0; border-radius: 10px; border: 1px solid var(--border); background: rgba(0,0,0,0.3); color: var(--text); text-align: center; font-family: 'Cairo'; outline: none; }
+        input:focus { border-color: var(--primary); box-shadow: 0 0 10px var(--primary); }
+        
+        .btn { background: linear-gradient(45deg, #0056b3, var(--primary)); color: white; border: none; padding: 12px; border-radius: 10px; font-weight: 700; cursor: pointer; width: 100%; font-size: 1rem; }
+        .btn:hover { transform: translateY(-3px); box-shadow: 0 8px 20px var(--primary); }
+        
+        #libraryContent { display: none; padding: 20px; max-width: 1300px; margin: auto; animation: fadeIn 0.5s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        
+        .top-nav { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; gap: 15px; flex-wrap: wrap; }
+        .status-chip { background: var(--card); padding: 8px 16px; border-radius: 50px; border: 1px solid var(--primary); cursor: pointer; font-size: 0.85rem; display: flex; align-items: center; gap: 8px; font-weight: bold; }
+        .status-chip:hover { background: var(--primary); color: #000; }
+        
+        .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.85); display: none; z-index: 2000; padding: 20px; backdrop-filter: blur(5px); }
+        .modal-box { background: var(--card); max-width: 450px; margin: 50px auto; padding: 25px; border-radius: 25px; border: 1px solid var(--primary); }
+        
+        .controls { display: grid; grid-template-columns: 2fr 1fr 1fr auto; gap: 12px; background: var(--card); padding: 15px; border-radius: 15px; margin-bottom: 30px; border: 1px solid var(--border); }
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 20px; }
+        
+        .card { background: var(--card); border-radius: 20px; padding: 12px; border: 1px solid var(--border); position: relative; overflow: hidden; display: flex; flex-direction: column; }
+        .card:hover { transform: translateY(-10px); border-color: var(--primary); box-shadow: 0 10px 20px rgba(0,0,0,0.4); }
+        .card-tag { position: absolute; top: 12px; right: 12px; background: var(--primary); color: #000; font-size: 0.7rem; padding: 4px 10px; border-radius: 8px; font-weight: 900; z-index: 5; }
+        .preview { width: 100%; aspect-ratio: 3/4; border-radius: 12px; object-fit: cover; background: #111; cursor: pointer; }
+        
+        .title-edit { font-weight: 700; background: transparent; border: none; color: var(--primary); width: 100%; text-align: center; font-size: 1rem; margin: 12px 0 5px 0; }
+        .book-meta { font-size: 0.75rem; color: #888; margin-bottom: 12px; text-align: center; }
+        .book-author { text-align: center; font-size: 0.8rem; color: #aaa; margin: 5px 0; }
+        .card-btns { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-top: auto; }
+        .btn-s { padding: 10px; border-radius: 8px; border: none; font-weight: bold; font-size: 0.8rem; cursor: pointer; color: #fff; }
+        
+        .book-rating { color: #f1c40f; font-size: 0.9rem; margin-bottom: 5px; text-align: center; }
+        .book-description { font-size: 0.8rem; color: #bbb; text-align: center; margin-bottom: 10px; height: 2.4em; overflow: hidden; }
+        .book-progress { font-size: 0.8rem; color: var(--success); text-align: center; margin-bottom: 5px; }
+        .book-reading-time { font-size: 0.8rem; color: #00d4ff; text-align: center; margin-bottom: 10px; }
+        
+        #toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: var(--primary); color: #000; padding: 12px 30px; border-radius: 15px; font-weight: 800; display: none; z-index: 5000; box-shadow: 0 5px 15px rgba(0,0,0,0.3); }
+        
+        @media (max-width: 600px) {
+            .grid { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; }
+            .controls { grid-template-columns: 1fr; }
+        }
+        .footer { text-align: center; padding: 40px; color: #666; font-size: 0.9rem; font-weight: bold; }
+        
+        /* Sidebar */
+        #sidebar {
+            position: fixed; top: 0; left: 0; width: 250px; height: 100%; background: var(--card); 
+            transform: translateX(-100%); transition: transform 0.3s ease; z-index: 1001;
+            padding: 20px; border-right: 1px solid var(--border);
+        }
+        #sidebar.open { transform: translateX(0); }
+        .sidebar-item { display: block; padding: 15px; border-bottom: 1px solid var(--border); cursor: pointer; }
+        .sidebar-item:hover { background: var(--primary); color: #000; }
+        
+        /* Contact */
+        .contact-btn { display: flex; align-items: center; justify-content: center; gap: 10px; background: linear-gradient(45deg, #0056b3, var(--primary)); color: white; border: none; padding: 12px; border-radius: 10px; font-weight: 700; cursor: pointer; width: 100%; font-size: 1rem; margin-top: 10px; }
+        .contact-btn:hover { transform: translateY(-3px); box-shadow: 0 8px 20px var(--primary); }
+        .contact-icon { font-size: 1.5rem; }
+    </style>
+    
+    <!-- تنسيقات المشغل -->
+    <style>
+        :root {
+            --reader-bg: #0f0f0f;
+            --toolbar-bg: rgba(20, 20, 20, 0.8);
+            --accent: #ff0055;
+            --text: #ffffff;
+        }
+        .ziad-reader-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--reader-bg); z-index: 10000; font-family: 'Cairo', sans-serif;
+        }
+        .reader-container { height: 100%; display: flex; flex-direction: column; position: relative; }
+        .reader-toolbar {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 10px 20px; background: var(--toolbar-bg); backdrop-filter: blur(15px);
+            border-bottom: 1px solid rgba(255,255,255,0.1); z-index: 10;
+        }
+        .t-section { display: flex; align-items: center; gap: 12px; }
+        .t-btn { 
+            background: rgba(255,255,255,0.05); border: none; color: white; 
+            width: 38px; height: 38px; border-radius: 10px; cursor: pointer;
+            transition: 0.3s; display: flex; align-items: center; justify-content: center;
+        }
+        .t-btn:hover { background: var(--accent); transform: translateY(-2px); }
+        .close-btn { background: rgba(255, 0, 0, 0.2); }
+        .page-info { background: rgba(0,0,0,0.3); padding: 5px 15px; border-radius: 20px; font-weight: bold; border: 1px solid rgba(255,255,255,0.1); }
+        .page-info input { width: 40px; background: transparent; border: none; color: var(--accent); text-align: center; font-size: 1rem; outline: none; }
+        #viewer-viewport { flex: 1; overflow: auto; display: flex; justify-content: center; padding: 40px 10px; background: #1a1a1a; transition: 0.4s; }
+        #canvas-wrapper { box-shadow: 0 20px 50px rgba(0,0,0,0.6); transition: transform 0.3s ease; position: relative; display: flex; }
+        #canvas-left, #canvas-right { border: 1px solid rgba(255,255,255,0.1); }
+        #draw-overlay { position: absolute; top: 0; left: 0; z-index: 5; cursor: crosshair; }
+        .floating-actions {
+            position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%);
+            background: rgba(0,0,0,0.7); backdrop-filter: blur(10px); padding: 10px 25px;
+            border-radius: 50px; display: flex; gap: 20px; border: 1px solid rgba(255,255,255,0.1);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5); opacity: 0.5; transition: 0.3s;
+        }
+        .floating-actions:hover { opacity: 1; bottom: 35px; }
+        .f-btn { background: transparent; border: none; color: #ddd; cursor: pointer; font-size: 0.9rem; font-family: 'Cairo'; }
+        .f-btn:hover { color: var(--accent); }
+        .v-sep { width: 1px; height: 20px; background: rgba(255,255,255,0.2); }
+        .mode-sepia { background: #f4ecd8 !important; }
+        .mode-sepia canvas { filter: sepia(0.6) contrast(1.1); }
+        .mode-dark { background: #000 !important; }
+        .mode-dark canvas { filter: invert(0.9) hue-rotate(180deg); }
+        .custom-scroll::-webkit-scrollbar { width: 8px; }
+        .custom-scroll::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 10px; }
+        #draw-tools { display: none; flex-direction: column; position: absolute; top: 50px; right: 20px; background: var(--toolbar-bg); padding: 10px; border-radius: 10px; }
+        #draw-tools button, #draw-tools input { margin: 5px 0; }
+    </style>
+</head>
+<body data-theme="dark">
+
+    <!-- ====================== شاشة البداية ====================== -->
+    <div id="splash-screen">
+        <div class="top-badge gold-text">#1</div>
+        
+        <div class="logo-container">
+            <img src="https://i.ibb.co/Pvk3ZKMK/image.jpg" alt="Ziad Library Logo">
+        </div>
+        
+        <h1 class="library-name gold-text">Ziad Library</h1>
+        
+        <div class="footer-text">Made In Aldriny</div>
+    </div>
+    <!-- ====================== نهاية شاشة البداية ====================== -->
+
+    <div id="loader">
+        <div class="loader-icon-container">
+            <img src="favicon.png" class="loader-logo" onerror="this.src='https://cdn-icons-png.flaticon.com/512/1043/1043322.png'">
+            <div class="loader-badge">#1</div>
+        </div>
+        <h1 class="loader-title">Ziad Library</h1>
+        <p class="loader-subtitle">Made In Aldriny</p>
+    </div>
+
+    <div class="floating-badge" id="floatingBadge">Ziad # 1</div>
+    
+    <div class="header">
+        <button id="sidebarToggle">☰</button>
+        <div class="header-logo-container">
+            <img src="favicon.png" class="user-logo" onerror="this.src='https://cdn-icons-png.flaticon.com/512/1043/1043322.png'">
+            <div class="ziad-name">Ziad Library</div>
+        </div>
+    </div>
+
+    <div id="sidebar">
+        <div id="user-name-display" style="text-align: center; font-weight: bold; padding: 10px; color: var(--primary);"></div>
+        <div class="sidebar-item" onclick="playAudio('click'); openProfile()">👤 أنا</div>
+        <div class="sidebar-item" id="settingsBtn" onclick="playAudio('click'); openSettings()">⚙️ الإعدادات</div>
+        <div class="sidebar-item" onclick="playAudio('click'); openContact()">📞 تواصل معنا</div>
+        <div class="sidebar-item" onclick="playAudio('click'); openDownloadBooks()">📚 تنزيل كتب</div>
+        <div class="sidebar-item" onclick="playAudio('click'); openAboutUs()">ℹ️ لمحة عنا</div>
+    </div>
+
+    <!-- شاشة الاختيار الأولية -->
+    <div id="initialScreen" class="glass-panel" style="display:none">
+        <h2 style="color:var(--primary); margin-top:0; font-size:1.8rem;">مرحباً بك في مكتبة Ziad Aldriny 2026 🌀</h2>
+        <p style="margin:25px 0 35px; font-size:1.1rem; line-height:1.5;">اختر كيف تريد البدء:</p>
+        
+        <button class="btn" onclick="startWithoutPassword()" style="margin-bottom:18px; background:linear-gradient(45deg,#2ecc71,#00d4ff); font-size:1.1rem; padding:16px;">
+            ⏩ ابدأ بدون كلمة مرور
+        </button>
+        
+        <button class="btn" onclick="showCreatePasswordModal()" style="font-size:1.1rem; padding:16px;">
+            🔐 أنشئ كلمة مرور الآن
+        </button>
+        
+        <p style="font-size:0.85rem; color:#888; margin-top:40px;">يمكنك إضافة أو تغيير كلمة المرور وسؤال الأمان في أي وقت من قسم الإعدادات</p>
+    </div>
+
+    <div id="loginPage" class="glass-panel" style="display:none">
+        <h2 style="color:var(--primary); margin-top:0">أهلاً بك يا بطل 🌀</h2>
+        <input type="password" id="passIn" placeholder="كلمة المرور">
+        <button class="btn" onclick="login()">دخول للمكتبة</button>
+        
+        <button class="btn" onclick="playAudio('click'); openContact()" style="margin-top:15px; background:linear-gradient(45deg,#6f42c1,var(--primary));">📞 تواصل معنا</button>
+        <button class="btn" onclick="playAudio('click'); openAboutUs()" style="margin-top:10px; background:linear-gradient(45deg,#198754,var(--primary));">ℹ️ لمحة عنا</button>
+        
+        <p onclick="playAudio('click'); showPage('secPage')" style="cursor:pointer; font-size:0.8rem; margin-top:20px; color:#555">هل نسيت كلمة المرور؟</p>
+    </div>
+
+    <div id="secPage" class="glass-panel" style="display:none">
+        <h3 style="color:var(--primary)">تحقق الأمان</h3>
+        <p style="font-size:0.9rem">ما هو طولك؟</p>
+        <input type="text" id="secAns" placeholder="اكتب الإجابة هنا">
+        <button class="btn" onclick="checkSec()">تأكيد الهوية</button>
+        <button class="btn" style="background:transparent; color:#777; margin-top:10px" onclick="playAudio('click'); showPage('loginPage')">رجوع</button>
+    </div>
+
+    <div id="libraryContent">
+        <div class="top-nav">
+            <div style="display:flex; gap:10px">
+                <div class="status-chip" onclick="playAudio('popup');" id="storageChip">💾 المساحة: <span id="totalStorage">0 KB</span></div>
+                <div class="status-chip" onclick="playAudio('trash'); showBin()" style="border-color:var(--danger); color:var(--danger)">🗑️ المحذوفات (<span id="binCount">0</span>)</div>
+            </div>
+            <div style="display:flex; gap:10px">
+                <button class="status-chip" style="background:#198754; color:#fff; border:none" onclick="playAudio('success'); exportData()">📤 تصدير نسخة</button>
+                <button class="status-chip" style="background:#6f42c1; color:#fff; border:none" onclick="playAudio('click'); document.getElementById('importFile').click()">📥 استيراد نسخة</button>
+                <input type="file" id="importFile" accept=".json" style="display:none" onchange="importData(event)">
+            </div>
+        </div>
+        <div class="controls">
+            <input type="text" id="search" placeholder="🔍 ابحث عن اسم الكتاب أو الوصف..." oninput="render()">
+            <select id="catFilter" onchange="playAudio('click'); render()">
+                <option value="all">📁 جميع التصنيفات</option>
+                <option value="كتب">📚 كتب</option>
+                <option value="روايات">🎭 روايات</option>
+                <option value="ملخصات">📝 ملخصات</option>
+                <option value="كتب دراسية">📖 كتب دراسية</option>
+                <option value="أخرى">✨ أخرى</option>
+            </select>
+            <select id="sort" onchange="playAudio('click'); render()">
+                <option value="new">🕒 الأحدث</option>
+                <option value="az">🔤 أبجدي</option>
+            </select>
+            <button class="btn" onclick="playAudio('popup'); document.getElementById('fileIn').click()">➕ رفع PDF</button>
+            <input type="file" id="fileIn" accept=".pdf" style="display:none" onchange="upload(event)">
+        </div>
+        <div class="grid" id="grid"></div>
+    </div>
+
+    <!-- باقي المودالات -->
+    <div id="settingsModal" class="modal"><div class="modal-box">
+        <h4 style="color:var(--primary); margin-top:0">الإعدادات ⚙️</h4>
+        <label>المظهر:</label>
+        <select id="themeSelect" onchange="playAudio('click'); setTheme(this.value)">
+            <option value="dark">داكن</option><option value="light">فاتح</option><option value="purple">بنفسجي</option><option value="forest">الغابة</option><option value="sunset">غروب الشمس</option><option value="gold">الذهبي</option>
+        </select>
+        <button class="btn" style="margin-top:20px" onclick="playAudio('click'); toggleLanguage()">🌐 تغيير اللغة إلى الإنجليزية</button>
+        <button class="btn" style="margin-top:10px" onclick="playAudio('click'); openPassChangeModal()">🔑 تغيير كلمة المرور</button>
+        <!-- زر الصوت الجديد -->
+        <button class="btn" style="margin-top:10px" onclick="playAudio('click'); openSoundSettings()">🔊 الصوت</button>
+        <button class="btn" style="margin-top:10px; background:var(--danger)" onclick="playAudio('trash'); deleteAllFiles()">🗑️ حذف كل الملفات</button>
+        <button class="btn" style="background:#333; margin-top:15px" onclick="playAudio('click'); closeModals()">إغلاق</button>
+    </div></div>
+
+    <div id="passChangeModal" class="modal"><div class="modal-box">
+        <h4 style="color:var(--primary)">تغيير كلمة المرور وسؤال الأمان</h4>
+        <label>كلمة المرور الجديدة:</label>
+        <input type="password" id="newPassInput" placeholder="كلمة مرور جديدة">
+        <label>سؤال الأمان الجديد (مثال: ما هو طولك؟):</label>
+        <input type="text" id="newSecQuestion" placeholder="سؤال الأمان">
+        <label>إجابة سؤال الأمان:</label>
+        <input type="text" id="newSecAnswer" placeholder="إجابة سؤال الأمان">
+        <button class="btn" onclick="playAudio('success'); saveNewPassAndSec()">حفظ التعديل</button>
+        <button class="btn" style="background:#333; margin-top:10px" onclick="playAudio('click'); closeModals()">إلغاء</button>
+    </div></div>
+
+    <!-- مودال إنشاء الباسورد الأولي -->
+    <div id="createPassModal" class="modal"><div class="modal-box">
+        <h4 style="color:var(--primary); margin-top:0">إنشاء كلمة المرور الأولية وسؤال الأمان</h4>
+        <label>كلمة المرور:</label>
+        <input type="password" id="initPass" placeholder="أدخل كلمة مرور قوية">
+        <label>سؤال الأمان (مثال: ما هو طولك؟):</label>
+        <input type="text" id="initSecQ" placeholder="سؤال الأمان">
+        <label>إجابة سؤال الأمان:</label>
+        <input type="text" id="initSecA" placeholder="الإجابة السرية">
+        <button class="btn" onclick="saveInitialPass()">حفظ ودخول المكتبة</button>
+        <button class="btn" style="background:#333; margin-top:10px" onclick="closeCreateModal()">رجوع</button>
+    </div></div>
+
+    <!-- مودال رفع الكتاب (محدث) -->
+    <div id="uploadModal" class="modal"><div class="modal-box">
+        <h4 style="color:var(--primary)">إضافة كتاب جديد</h4>
+        <div id="pendingFileName" style="font-size:0.8rem; color:#888; margin-bottom:10px"></div>
+        
+        <label>اسم الكتاب:</label>
+        <input type="text" id="bookTitleInput" placeholder="اسم الكتاب">
+        
+        <label>اسم المؤلف:</label>
+        <input type="text" id="bookAuthorInput" placeholder="اسم المؤلف">
+        
+        <label>التصنيف:</label>
+        <select id="selectedCat">
+            <option value="كتب">📚 كتب</option>
+            <option value="روايات">🎭 روايات</option>
+            <option value="ملخصات">📝 ملخصات</option>
+            <option value="كتب دراسية">📖 كتب دراسية</option>
+            <option value="أخرى">✨ أخرى</option>
+        </select>
+        
+        <label>وصف الكتاب:</label>
+        <input type="text" id="bookDescInput" placeholder="اكتب وصفاً مختصراً">
+        
+        <label>التقييم:</label>
+        <select id="bookRatingInput">
+            <option value="5">⭐⭐⭐⭐⭐ (ممتاز)</option>
+            <option value="4">⭐⭐⭐⭐ (جيد جداً)</option>
+            <option value="3">⭐⭐⭐ (متوسط)</option>
+            <option value="2">⭐⭐ (ضعيف)</option>
+            <option value="1">⭐ (سيء)</option>
+        </select>
+        
+        <button class="btn" id="confirmUploadBtn">تأكيد الرفع</button>
+        <button class="btn" style="background:#333; margin-top:10px" onclick="playAudio('click'); closeModals()">إلغاء</button>
+    </div></div>
+
+    <!-- مودال تعديل معلومات الكتاب -->
+    <div id="editBookModal" class="modal"><div class="modal-box">
+        <h4 style="color:var(--primary)">تعديل معلومات الكتاب</h4>
+        
+        <label>اسم الكتاب:</label>
+        <input type="text" id="editTitle" placeholder="اسم الكتاب">
+        
+        <label>اسم المؤلف:</label>
+        <input type="text" id="editAuthor" placeholder="اسم المؤلف">
+        
+        <label>التصنيف:</label>
+        <select id="editCat">
+            <option value="كتب">📚 كتب</option>
+            <option value="روايات">🎭 روايات</option>
+            <option value="ملخصات">📝 ملخصات</option>
+            <option value="كتب دراسية">📖 كتب دراسية</option>
+            <option value="أخرى">✨ أخرى</option>
+        </select>
+        
+        <label>وصف الكتاب:</label>
+        <input type="text" id="editDesc" placeholder="اكتب وصفاً مختصراً">
+        
+        <label>التقييم:</label>
+        <select id="editRating">
+            <option value="5">⭐⭐⭐⭐⭐ (ممتاز)</option>
+            <option value="4">⭐⭐⭐⭐ (جيد جداً)</option>
+            <option value="3">⭐⭐⭐ (متوسط)</option>
+            <option value="2">⭐⭐ (ضعيف)</option>
+            <option value="1">⭐ (سيء)</option>
+        </select>
+        
+        <button class="btn" onclick="playAudio('success'); saveEditBook()">💾 حفظ التعديلات</button>
+        <button class="btn" style="background:#333; margin-top:10px" onclick="playAudio('click'); closeModals()">إلغاء</button>
+    </div></div>
+
+    <div id="binModal" class="modal"><div class="modal-box">
+        <h4 style="color:var(--danger)">السلة</h4>
+        <div id="binList"></div>
+        <button class="btn" style="background:var(--danger)" onclick="emptyBin()">إفراغ الكل</button>
+        <button class="btn" style="background:#333; margin-top:10px" onclick="playAudio('click'); closeModals()">إغلاق</button>
+    </div></div>
+
+    <div id="contactModal" class="modal"><div class="modal-box">
+        <h4 style="color:var(--primary); margin-top:0">تواصل معنا 📞</h4>
+        <a href="tel:01055662785" class="contact-btn"><span class="contact-icon"><i class="fas fa-phone"></i></span> اتصال</a>
+        <a href="https://wa.me/01055662785" class="contact-btn"><span class="contact-icon"><i class="fab fa-whatsapp"></i></span> واتساب</a>
+        <a href="https://www.facebook.com/profile.php?id=61583039190517&locale=ar_AR" class="contact-btn"><span class="contact-icon"><i class="fab fa-facebook"></i></span> فيسبوك</a>
+        <a href="https://www.instagram.com/ziadalzoz1020/" class="contact-btn"><span class="contact-icon"><i class="fab fa-instagram"></i></span> إنستغرام</a>
+        <button class="btn" style="background:#333; margin-top:15px" onclick="playAudio('click'); closeModals()">إغلاق</button>
+    </div></div>
+
+    <div id="downloadBooksModal" class="modal"><div class="modal-box">
+        <h4 style="color:var(--primary); margin-top:0">تنزيل كتب 📚</h4>
+        <a href="https://www.noor-book.com/" class="contact-btn"><span class="contact-icon">📖</span> مكتبة نور</a>
+        <a href="https://www.kotobati.com/" class="contact-btn"><span class="contact-icon">📖</span> مكتبة كتوباتي</a>
+        <a href="https://books-library.website/" class="contact-btn"><span class="contact-icon">📖</span> مكتبة العرب</a>
+        <a href="https://ellibrary.moe.gov.eg/" class="contact-btn"><span class="contact-icon">📖</span> مكتبة الوزارة</a>
+        <button class="btn" style="background:#333; margin-top:15px" onclick="playAudio('click'); closeModals()">إغلاق</button>
+    </div></div>
+
+    <div id="aboutUsModal" class="modal"><div class="modal-box">
+        <h4 style="color:var(--primary); margin-top:0">لمحة عنا ℹ️</h4>
+        <p style="text-align: center; font-size: 1rem; line-height: 1.5;">مكتبة Ziad Aldriny 2026 هي مكتبة رقمية متكاملة ومتطورة لتخزين وإدارة الكتب الإلكترونية والملخصات. تم تصميمها وتطويرها بالكامل بواسطة زياد الدريني، وهي توفر واجهة مستخدم احترافية تدعم اللغة العربية بالكامل، مع خيارات للتحكم في المظهر (مثل الداكن، الفاتح، البنفسجي، والمزيد). تتيح المكتبة رفع الكتب بتنسيق PDF، عرضها في مشغل متقدم يدعم التكبير، التصغير، التدوير، الطباعة، والتنزيل، بالإضافة إلى خيارات الأمان مثل كلمة المرور وسؤال الاستعادة. كما تدعم تصدير واستيراد النسخ الاحتياطية، إدارة التصنيفات (كتب، روايات، ملخصات، أخرى)، والبحث المتقدم. المكتبة مبنية على تقنيات حديثة مثل IndexedDB للتخزين المحلي، مما يجعلها سريعة وآمنة دون الحاجة إلى خوادم خارجية. تهدف إلى تسهيل القراءة والدراسة للمستخدمين في عام 2026 وما بعده، مع دعم للتواصل الاجتماعي والمشاركة.</p>
+        <button class="btn" style="margin-top:20px" onclick="playAudio('click'); shareSite()">📤 شارك الموقع</button>
+        <button class="btn" style="background:#333; margin-top:15px" onclick="playAudio('click'); closeModals()">إغلاق</button>
+    </div></div>
+
+    <!-- مودال الملف الشخصي -->
+    <div id="profileModal" class="modal"><div class="modal-box">
+        <h4 style="color:var(--primary); margin-top:0">الملف الشخصي 👤</h4>
+        <div id="profileContent"></div>
+        <button class="btn" style="background:#333; margin-top:15px" onclick="playAudio('click'); closeModals()">إغلاق</button>
+    </div></div>
+
+    <!-- مودال إضافة اسم المستخدم -->
+    <div id="addUsernameModal" class="modal"><div class="modal-box">
+        <h4 style="color:var(--primary); margin-top:0">أدخل اسمك</h4>
+        <input type="text" id="usernameInput" placeholder="اسم المستخدم">
+        <button class="btn" onclick="playAudio('success'); saveUsername()">حفظ</button>
+        <button class="btn" style="background:#333; margin-top:10px" onclick="playAudio('click'); closeModals()">إلغاء</button>
+    </div></div>
+
+    <!-- ====================== مودال إعدادات الصوت الجديد ====================== -->
+    <div id="soundSettingsModal" class="modal">
+        <div class="modal-box">
+            <h4 style="color:var(--primary); margin-top:0">إعدادات الصوت 🔊</h4>
+            
+            <p style="margin-bottom:15px; font-size:1.05rem;">اختر صوت الدخول إلى المكتبة (يُشغّل عند الدخول الناجح بدلاً من صوت المحرك الافتراضي):</p>
+            
+            <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 12px; margin-bottom: 30px;">
+                <button class="btn" onclick="selectLoginSound('engine');" style="background: linear-gradient(45deg, #00d4ff, #007bff);">🚗 محرك سيارة<br><small>(الافتراضي)</small></button>
+                <button class="btn" onclick="selectLoginSound('rocket');" style="background: linear-gradient(45deg, #ff8800, #e67e22);">🚀 صاروخ فضائي</button>
+                <button class="btn" onclick="selectLoginSound('magic');" style="background: linear-gradient(45deg, #bc13fe, #6f42c1);">✨ تأثير سحري</button>
+                <button class="btn" onclick="selectLoginSound('cheer');" style="background: linear-gradient(45deg, #2ecc71, #27ae60);">👏 تصفيق الجمهور</button>
+            </div>
+            
+            <label style="display:block; margin:15px 0 8px; font-weight:bold;">كتم الصوت العام (كل الأصوات في المكتبة):</label>
+            <button class="btn" id="muteBtn" style="background:var(--danger); width:100%;" onclick="toggleMute()">🔇 كتم الصوت</button>
+            
+            <button class="btn" style="background:#333; margin-top:20px" onclick="playAudio('click'); closeModals()">إغلاق</button>
+        </div>
+    </div>
+
+    <div id="toast"></div>
+    <div class="footer">بواسطة Ziad Library &copy; 2026</div>
+
+    <div id="pdfModal" class="ziad-reader-overlay" style="display:none;">
+        <div class="reader-container">
+            <header class="reader-toolbar">
+                <div class="t-section">
+                    <button class="t-btn close-btn" onclick="closeReader()" title="إغلاق">✕</button>
+                    <div class="v-sep"></div>
+                    <h3 id="reader-filename">جاري التحميل...</h3>
+                </div>
+                <div class="t-section nav-controls">
+                    <button class="t-btn" id="prev-pg">◀</button>
+                    <div class="page-info">
+                        <input type="number" id="page-num-input" value="1" min="1">
+                        <span>/</span>
+                        <span id="total-pages">0</span>
+                    </div>
+                    <button class="t-btn" id="next-pg">▶</button>
+                </div>
+                <div class="t-section tools">
+                    <button class="t-btn" id="z-out" title="تصغير">➖</button>
+                    <span id="zoom-percent">100%</span>
+                    <button class="t-btn" id="z-in" title="تكبير">➕</button>
+                    <div class="v-sep"></div>
+                    <button class="t-btn" id="rotate-pdf" title="تدوير">🔄</button>
+                    <button class="t-btn" id="reader-theme" title="وضع القراءة">🌓</button>
+                    <button class="t-btn" id="full-scr" title="ملء الشاشة">📺</button>
+                    <button class="t-btn" id="double-page-toggle" title="وضع الصفحات المزدوجة">📖</button>
+                    <button class="t-btn" id="draw-toggle" title="رسم على الكتاب">✏️</button>
+                </div>
+            </header>
+            <main id="viewer-viewport" class="custom-scroll">
+                <div id="canvas-wrapper">
+                    <canvas id="canvas-left"></canvas>
+                    <canvas id="canvas-right" style="display:none;"></canvas>
+                    <canvas id="draw-overlay"></canvas>
+                </div>
+            </main>
+            <div class="floating-actions">
+                <button class="f-btn" id="auto-scroll-toggle">🖱️ تمرير تلقائي</button>
+                <div class="v-sep"></div>
+                <button class="f-btn" onclick="window.print()">🖨️ طباعة</button>
+                <button class="f-btn" id="reader-download">📥 تحميل</button>
+            </div>
+            <div id="draw-tools">
+                <label>لون:</label><input type="color" id="draw-color" value="#ff0000">
+                <label>سمك:</label><input type="number" id="draw-width" value="5" min="1" max="20">
+                <button class="t-btn" id="draw-eraser">🧽 محاية</button>
+                <button class="t-btn" id="draw-clear">🗑️ مسح الكل</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js';
+        
+        const sounds = {
+            click: "https://assets.mixkit.co/active_storage/sfx/2568/2568-preview.mp3",
+            success: "https://assets.mixkit.co/active_storage/sfx/1435/1435-preview.mp3",
+            trash: "https://assets.mixkit.co/active_storage/sfx/2570/2570-preview.mp3",
+            error: "https://assets.mixkit.co/active_storage/sfx/2572/2572-preview.mp3",
+            popup: "https://assets.mixkit.co/active_storage/sfx/2580/2580-preview.mp3",
+            engine: "https://assets.mixkit.co/active_storage/sfx/876/876-preview.mp3",
+            // الأصوات الجديدة للاختيار (يمكنك استبدال الروابط بأي روابط mixkit أخرى)
+            rocket: "https://assets.mixkit.co/active_storage/sfx/2955/2955-preview.mp3",
+            magic: "https://assets.mixkit.co/active_storage/sfx/2571/2571-preview.mp3",
+            cheer: "https://assets.mixkit.co/active_storage/sfx/1434/1434-preview.mp3"
+        };
+
+        let db;
+        let currentPass = localStorage.getItem('ziadPass') || '';
+        let currentSecQuestion = localStorage.getItem('ziadSecQuestion') || 'ما هو طولك؟';
+        let currentSecAnswer = localStorage.getItem('ziadSecAnswer') || 'معرفش';
+        let pendingFile = null;
+        let editingBookId = null;
+        let userName = localStorage.getItem('userName') || '';
+        let currentBookId = null;
+        let readingStartTime = null;
+        
+        // إعدادات الصوت الجديدة
+        let selectedLoginSound = localStorage.getItem('ziadLoginSound') || 'engine';
+        let isMuted = localStorage.getItem('ziadMuted') === 'true';
+
+        const init = () => {
+            const theme = localStorage.getItem('ziadTheme') || 'dark';
+            const lang = localStorage.getItem('ziadLang') || 'ar';
+            document.body.setAttribute('data-theme', theme);
+            if (lang === 'en') {
+                document.documentElement.lang = 'en';
+                document.documentElement.dir = 'ltr';
+            }
+            // تحميل إعدادات الصوت
+            selectedLoginSound = localStorage.getItem('ziadLoginSound') || 'engine';
+            isMuted = localStorage.getItem('ziadMuted') === 'true';
+            updateUserNameDisplay();
+        };
+        init();
+
+        function updateUserNameDisplay() {
+            const display = document.getElementById('user-name-display');
+            if (userName) {
+                display.innerText = `مرحباً، ${userName}`;
+            } else {
+                display.innerText = '';
+            }
+        }
+
+        function setTheme(val) {
+            localStorage.setItem('ziadTheme', val);
+            document.body.setAttribute('data-theme', val);
+        }
+
+        function toggleLanguage() {
+            const currentLang = localStorage.getItem('ziadLang') || 'ar';
+            const newLang = currentLang === 'ar' ? 'en' : 'ar';
+            localStorage.setItem('ziadLang', newLang);
+            if (newLang === 'en') {
+                document.documentElement.lang = 'en';
+                document.documentElement.dir = 'ltr';
+            } else {
+                document.documentElement.lang = 'ar';
+                document.documentElement.dir = 'rtl';
+            }
+            location.reload();
+        }
+
+        function openSettings() { playAudio('popup'); document.getElementById('settingsModal').style.display='block'; }
+        function openContact() { playAudio('popup'); document.getElementById('contactModal').style.display='block'; }
+        function openDownloadBooks() { playAudio('popup'); document.getElementById('downloadBooksModal').style.display='block'; }
+        function openAboutUs() { playAudio('popup'); document.getElementById('aboutUsModal').style.display='block'; }
+        function shareSite() {
+            if (navigator.share) {
+                navigator.share({
+                    title: 'مكتبة Ziad Aldriny 2026',
+                    text: 'اكتشف مكتبة رقمية متكاملة للكتب والملخصات!',
+                    url: 'https://ziadalzoz1020-cpu.github.io/my-library-zi/'
+                }).then(() => showToast('✅ تم المشاركة'))
+                .catch(() => showToast('❌ خطأ في المشاركة'));
+            } else {
+                showToast('❌ المشاركة غير مدعومة في هذا المتصفح');
+            }
+        }
+        function openPassChangeModal() { document.getElementById('passChangeModal').style.display = 'block'; }
+        function saveNewPassAndSec() {
+            const np = document.getElementById('newPassInput').value.trim();
+            const nsq = document.getElementById('newSecQuestion').value.trim();
+            const nsa = document.getElementById('newSecAnswer').value.trim();
+            if(np && nsq && nsa) {
+                localStorage.setItem('ziadPass', np);
+                localStorage.setItem('ziadSecQuestion', nsq);
+                localStorage.setItem('ziadSecAnswer', nsa);
+                currentPass = np;
+                currentSecQuestion = nsq;
+                currentSecAnswer = nsa;
+                showToast("✅ تم تغيير كلمة المرور وسؤال الأمان");
+                document.getElementById('newPassInput').value = '';
+                document.getElementById('newSecQuestion').value = '';
+                document.getElementById('newSecAnswer').value = '';
+                closeModals();
+            } else {
+                showToast("❌ يرجى ملء جميع الحقول");
+            }
+        }
+        function deleteAllFiles() {
+            if(confirm("هل أنت متأكد من حذف جميع الملفات؟")) {
+                db.transaction("books", "readwrite").objectStore("books").clear().onsuccess = () => {
+                    db.transaction("bin", "readwrite").objectStore("bin").clear().onsuccess = () => {
+                        render(); updateStats(); showToast("تم حذف جميع الملفات");
+                    };
+                };
+            }
+        }
+
+        // ====================== إعدادات الصوت الجديدة ======================
+        function openSoundSettings() {
+            playAudio('click');
+            const modal = document.getElementById('soundSettingsModal');
+            modal.style.display = 'block';
+            // تحديث نص زر الكتم
+            const muteBtn = document.getElementById('muteBtn');
+            muteBtn.innerText = isMuted ? '🔊 إلغاء الكتم' : '🔇 كتم الصوت';
+        }
+
+        function getSoundName(key) {
+            const names = {
+                engine: 'محرك سيارة',
+                rocket: 'صاروخ فضائي',
+                magic: 'تأثير سحري',
+                cheer: 'تصفيق الجمهور'
+            };
+            return names[key] || key;
+        }
+
+        function selectLoginSound(key) {
+            if (!sounds[key]) return;
+            selectedLoginSound = key;
+            localStorage.setItem('ziadLoginSound', key);
+            showToast(`✅ تم اختيار صوت: ${getSoundName(key)}`);
+            // تشغيل معاينة الصوت (إذا لم يكن مكتوماً)
+            if (!isMuted) {
+                const audio = new Audio(sounds[key]);
+                audio.volume = 0.5;
+                audio.play().catch(() => {});
+            }
+        }
+
+        function toggleMute() {
+            isMuted = !isMuted;
+            localStorage.setItem('ziadMuted', isMuted);
+            const muteBtn = document.getElementById('muteBtn');
+            if (muteBtn) muteBtn.innerText = isMuted ? '🔊 إلغاء الكتم' : '🔇 كتم الصوت';
+            showToast(isMuted ? '🔇 تم كتم جميع الأصوات' : '🔊 تم تفعيل الأصوات');
+        }
+
+        // ====================== التعامل مع الشاشة الأولية ======================
+        function handleInitialScreen() {
+            const initialized = localStorage.getItem('ziadInitialized');
+            if (!initialized) {
+                document.getElementById('initialScreen').style.display = 'block';
+            } else {
+                if (currentPass === '') {
+                    showPage('libraryContent');
+                    render();
+                } else {
+                    showPage('loginPage');
+                }
+            }
+        }
+
+        function startWithoutPassword() {
+            localStorage.setItem('ziadPass', '');
+            localStorage.setItem('ziadInitialized', 'true');
+            currentPass = '';
+            document.getElementById('initialScreen').style.display = 'none';
+            playAudio('success');
+            showPage('libraryContent');
+            render();
+            showToast('✅ تم البدء بدون كلمة مرور. يمكنك إضافتها لاحقاً من الإعدادات.');
+        }
+
+        function showCreatePasswordModal() {
+            document.getElementById('initialScreen').style.display = 'none';
+            document.getElementById('createPassModal').style.display = 'block';
+            document.getElementById('initPass').value = '';
+            document.getElementById('initSecQ').value = '';
+            document.getElementById('initSecA').value = '';
+        }
+
+        function saveInitialPass() {
+            const pass = document.getElementById('initPass').value.trim();
+            const q = document.getElementById('initSecQ').value.trim();
+            const a = document.getElementById('initSecA').value.trim();
+            if (pass.length < 1 || q.length < 1 || a.length < 1) {
+                showToast("❌ يرجى ملء جميع الحقول");
+                return;
+            }
+            localStorage.setItem('ziadPass', pass);
+            localStorage.setItem('ziadSecQuestion', q);
+            localStorage.setItem('ziadSecAnswer', a);
+            localStorage.setItem('ziadInitialized', 'true');
+            currentPass = pass;
+            currentSecQuestion = q;
+            currentSecAnswer = a;
+            document.getElementById('createPassModal').style.display = 'none';
+            playAudio('success');
+            showPage('libraryContent');
+            render();
+            showToast("✅ تم إنشاء كلمة المرور وسؤال الأمان بنجاح!");
+        }
+
+        function closeCreateModal() {
+            document.getElementById('createPassModal').style.display = 'none';
+            document.getElementById('initialScreen').style.display = 'block';
+        }
+
+        const req = indexedDB.open("Ziad_Final_2026", 4);
+        req.onupgradeneeded = (e) => {
+            const d = e.target.result;
+            if (!d.objectStoreNames.contains('books')) {
+                d.createObjectStore("books", {keyPath: "id", autoIncrement: true});
+            }
+            if (!d.objectStoreNames.contains('bin')) {
+                d.createObjectStore("bin", {keyPath: "id", autoIncrement: true});
+            }
+        };
+        req.onsuccess = (e) => { 
+            db = e.target.result; 
+            updateStats();
+            setTimeout(() => {
+                document.getElementById('loader').classList.add('fade-out');
+                setTimeout(() => {
+                    document.getElementById('loader').style.display='none';
+                    handleInitialScreen();
+                }, 1000);
+            }, 2000);
+        };
+
+        function showToast(m) {
+            const t = document.getElementById('toast'); t.innerText = m;
+            t.style.display = 'block'; setTimeout(() => t.style.display = 'none', 3000);
+        }
+
+        function showPage(id) {
+            ['loginPage', 'secPage', 'libraryContent', 'initialScreen'].forEach(p => {
+                const el = document.getElementById(p);
+                if (el) el.style.display = 'none';
+            });
+            const target = document.getElementById(id);
+            if (target) target.style.display = 'block';
+            
+            const fBadge = document.getElementById('floatingBadge');
+            const sBtn = document.getElementById('sidebarToggle');
+            if (id === 'libraryContent') { 
+                fBadge.style.display = 'block'; 
+                sBtn.style.display = 'block'; 
+            } else { 
+                fBadge.style.display = 'none'; 
+                sBtn.style.display = 'none'; 
+            }
+        }
+
+        function login() {
+            if(document.getElementById('passIn').value === currentPass) { 
+                playAudio('engine'); // سيستخدم الصوت المختار تلقائياً
+                showPage('libraryContent'); 
+                render(); 
+            } else {
+                playAudio('error');
+                showToast("❌ كلمة المرور خطأ");
+            }
+        }
+
+        function checkSec() {
+            if(document.getElementById('secAns').value === currentSecAnswer) {
+                playAudio('engine');
+                showPage('libraryContent'); 
+                showToast("الباسورد هو: " + currentPass); 
+                render();
+            } else {
+                playAudio('error');
+                showToast("⚠️ إجابة خطأ");
+            }
+        }
+
+        function closeModals() { document.querySelectorAll('.modal').forEach(m => m.style.display='none'); }
+
+        function upload(e) {
+            pendingFile = e.target.files[0];
+            if(!pendingFile) return;
+            playAudio('popup');
+            document.getElementById('pendingFileName').innerText = pendingFile.name;
+            document.getElementById('bookTitleInput').value = pendingFile.name.replace(/\.pdf$/i, '');
+            document.getElementById('bookAuthorInput').value = '';
+            document.getElementById('uploadModal').style.display = 'block';
+        }
+
+        async function getPdfInfo(dataUrl) {
+            try {
+                const pdf = await pdfjsLib.getDocument(dataUrl).promise;
+                const numPages = pdf.numPages;
+                const page = await pdf.getPage(1);
+                const view = page.getViewport({scale: 0.3});
+                const canv = document.createElement('canvas');
+                canv.width = view.width;
+                canv.height = view.height;
+                await page.render({canvasContext: canv.getContext('2d'), viewport: view}).promise;
+                return {
+                    thumb: canv.toDataURL('image/jpeg', 0.6),
+                    numPages: numPages
+                };
+            } catch(e) {
+                console.error("PDF info error:", e);
+                return {thumb: '', numPages: 0};
+            }
+        }
+
+        document.getElementById('confirmUploadBtn').onclick = async () => {
+            const cat = document.getElementById('selectedCat').value;
+            const desc = document.getElementById('bookDescInput').value || "لا يوجد وصف";
+            const rating = document.getElementById('bookRatingInput').value;
+            const title = document.getElementById('bookTitleInput').value.trim() || pendingFile.name.replace(/\.pdf$/i, '');
+            const author = document.getElementById('bookAuthorInput').value.trim() || 'غير معروف';
+            const file = pendingFile;
+            closeModals();
+            showToast("⏳ جاري الرفع واستخراج معلومات PDF...");
+            
+            const r = new FileReader();
+            r.onload = async (ev) => {
+                const {thumb, numPages} = await getPdfInfo(ev.target.result);
+                const tx = db.transaction("books", "readwrite");
+                tx.objectStore("books").add({ 
+                    name: title, 
+                    author: author,
+                    numPages: numPages,
+                    data: ev.target.result, 
+                    thumb, 
+                    size: file.size, 
+                    category: cat,
+                    description: desc,
+                    rating: rating,
+                    date: new Date().toLocaleDateString('ar-EG'),
+                    readCount: 0,
+                    lastPage: 1,
+                    progress: 0,
+                    readingTime: 0
+                });
+                tx.oncomplete = () => { 
+                    playAudio('success');
+                    render(); 
+                    updateStats(); 
+                    showToast("✅ تم حفظ الكتاب مع اسم المؤلف وعدد الصفحات");
+                    document.getElementById('bookDescInput').value = '';
+                    document.getElementById('bookTitleInput').value = '';
+                    document.getElementById('bookAuthorInput').value = '';
+                };
+            };
+            r.readAsDataURL(file);
+        };
+
+        function render() {
+            const g = document.getElementById('grid');
+            const q = document.getElementById('search').value.toLowerCase();
+            const s = document.getElementById('sort').value;
+            const cf = document.getElementById('catFilter').value;
+            g.innerHTML = "";
+            const tx = db.transaction("books", "readonly");
+            let books = [];
+            tx.objectStore("books").openCursor().onsuccess = (e) => {
+                const c = e.target.result;
+                if(c) { 
+                    const nameMatch = c.value.name.toLowerCase().includes(q);
+                    const descMatch = c.value.description && c.value.description.toLowerCase().includes(q);
+                    const authorMatch = (c.value.author || '').toLowerCase().includes(q);
+                    if((nameMatch || descMatch || authorMatch) && (cf === 'all' || c.value.category === cf)) books.push(c.value); 
+                    c.continue(); 
+                } else {
+                    books.sort((a,b) => s === 'az' ? a.name.localeCompare(b.name) : b.id - a.id);
+                    books.forEach(b => {
+                        const d = document.createElement('div'); d.className = 'card';
+                        const stars = "⭐".repeat(b.rating || 5);
+                        const progress = b.progress || 0;
+                        const readingTime = b.readingTime || 0;
+                        d.innerHTML = `
+                            <div class="card-tag">${b.category || 'كتب'}</div>
+                            <img src="${b.thumb || 'https://via.placeholder.com/150'}" class="preview" onclick="playAudio('popup'); viewB(${b.id})">
+                            <input class="title-edit" value="${b.name}" onchange="updateTitle(${b.id}, this.value)">
+                            <div class="book-rating">${stars}</div>
+                            <div class="book-author">👤 ${b.author || 'غير معروف'}</div>
+                            <div class="book-description">${b.description || "بدون وصف"}</div>
+                            <div class="book-progress">📊 تقدم: ${progress}%</div>
+                            <div class="book-reading-time">🕒 وقت القراءة: ${formatTime(readingTime)}</div>
+                            <div class="book-meta">📅 ${b.date} | 📖 ${b.numPages || '?'} صفحة | ${formatSize(b.size)}</div>
+                            <div class="card-btns">
+                                <button class="btn-s" style="background:var(--primary); color:#000" onclick="playAudio('popup'); viewB(${b.id})">فتح</button>
+                                <button class="btn-s" style="background:#f1c40f; color:#000" onclick="playAudio('click'); editBook(${b.id})">✏️ تعديل</button>
+                                <button class="btn-s" style="background:#333" onclick="playAudio('click'); downB(${b.id})">تنزيل</button>
+                                <button class="btn-s" style="background:var(--danger)" onclick="playAudio('trash'); moveToBin(${b.id})">حذف</button>
+                            </div>`;
+                        g.appendChild(d);
+                    });
+                }
+            };
+        }
+
+        let currentPdfUrl = null;
+
+        function viewB(id) {
+            db.transaction("books").objectStore("books").get(id).onsuccess = (e) => {
+                const b = e.target.result;
+                const blob = dataURLtoBlob(b.data);
+                currentPdfUrl = URL.createObjectURL(blob);
+                currentBookId = id;
+                pageNum = b.lastPage || 1;
+                readingStartTime = Date.now();
+                openReader(currentPdfUrl, b.name);
+                incrementReadCount(id);
+            };
+        }
+
+        function incrementReadCount(id) {
+            const tx = db.transaction("books", "readwrite");
+            const store = tx.objectStore("books");
+            store.get(id).onsuccess = (e) => {
+                const data = e.target.result;
+                data.readCount = (data.readCount || 0) + 1;
+                store.put(data);
+            };
+        }
+
+        function updateBookProgress(id, lastPage, numPages) {
+            const tx = db.transaction("books", "readwrite");
+            const store = tx.objectStore("books");
+            store.get(id).onsuccess = (e) => {
+                const data = e.target.result;
+                data.lastPage = lastPage;
+                data.progress = Math.round((lastPage / numPages) * 100);
+                store.put(data);
+                tx.oncomplete = () => {
+                    render();
+                };
+            };
+        }
+
+        function updateReadingTime(id, additionalTime) {
+            const tx = db.transaction("books", "readwrite");
+            const store = tx.objectStore("books");
+            store.get(id).onsuccess = (e) => {
+                const data = e.target.result;
+                data.readingTime = (data.readingTime || 0) + Math.round(additionalTime / 60000);
+                store.put(data);
+                tx.oncomplete = () => {
+                    render();
+                };
+            };
+        }
+
+        function downB(id) {
+            db.transaction("books").objectStore("books").get(id).onsuccess = (e) => {
+                const b = e.target.result;
+                const a = document.createElement('a'); a.href = b.data; a.download = b.name + ".pdf"; a.click();
+            };
+        }
+
+        function updateTitle(id, val) {
+            const tx = db.transaction("books", "readwrite");
+            const store = tx.objectStore("books");
+            store.get(id).onsuccess = (e) => {
+                const data = e.target.result;
+                data.name = val;
+                store.put(data);
+                playAudio('success');
+                showToast("تم تعديل الاسم");
+            };
+        }
+
+        function dataURLtoBlob(dataurl) {
+            var arr = dataurl.split(','), mime = arr[0].match(/:(.*?);/)[1],
+                bstr = atob(arr[1]), n = bstr.length, u8arr = new Uint8Array(n);
+            while(n--) u8arr[n] = bstr.charCodeAt(n);
+            return new Blob([u8arr], {type:mime});
+        }
+
+        function moveToBin(id) {
+            const tx = db.transaction(["books", "bin"], "readwrite");
+            tx.objectStore("books").get(id).onsuccess = (e) => {
+                tx.objectStore("bin").add(e.target.result);
+                tx.objectStore("books").delete(id);
+                tx.oncomplete = () => { render(); updateStats(); showToast("تم النقل للسلة"); };
+            };
+        }
+
+        function showBin() {
+            const list = document.getElementById('binList'); list.innerHTML = "";
+            document.getElementById('binModal').style.display = 'block';
+            db.transaction("bin").objectStore("bin").openCursor().onsuccess = (e) => {
+                const c = e.target.result;
+                if(c) {
+                    const row = document.createElement('div'); row.style = "display:flex; justify-content:space-between; padding:10px; border-bottom:1px solid #333; align-items:center";
+                    row.innerHTML = `<span style="font-size:0.9rem">${c.value.name}</span> <button class="btn-s" style="background:#198754; padding:5px 10px" onclick="playAudio('success'); restoreBook(${c.value.id})">استعادة</button>`;
+                    list.appendChild(row); c.continue();
+                }
+            };
+        }
+
+        function restoreBook(id) {
+            const tx = db.transaction(["books", "bin"], "readwrite");
+            tx.objectStore("bin").get(id).onsuccess = (e) => {
+                tx.objectStore("books").add(e.target.result);
+                tx.objectStore("bin").delete(id);
+                tx.oncomplete = () => { showBin(); render(); updateStats(); };
+            };
+        }
+
+        function emptyBin() {
+            if(confirm("حذف نهائي؟")) {
+                playAudio('trash');
+                db.transaction("bin", "readwrite").objectStore("bin").clear().onsuccess = () => {
+                    closeModals(); updateStats(); showToast("تم الحذف النهائي");
+                };
+            }
+        }
+
+        function updateStats() {
+            let total = 0;
+            const tx = db.transaction(["books", "bin"], "readonly");
+            tx.objectStore("books").openCursor().onsuccess = (e) => {
+                const c = e.target.result;
+                if(c) { total += (c.value.size || 0); c.continue(); }
+                else document.getElementById('totalStorage').innerText = formatSize(total);
+            };
+            tx.objectStore("bin").count().onsuccess = (e) => document.getElementById('binCount').innerText = e.target.result;
+        }
+
+        function formatSize(bytes) {
+            if(!bytes) return '0 B';
+            const i = Math.floor(Math.log(bytes) / Math.log(1024));
+            return (bytes / Math.pow(1024, i)).toFixed(1) + ' ' + ['B', 'KB', 'MB', 'GB'][i];
+        }
+
+        function formatTime(minutes) {
+            if (minutes < 60) return minutes + ' دقيقة';
+            const hours = Math.floor(minutes / 60);
+            const mins = minutes % 60;
+            return hours + ' ساعة ' + mins + ' دقيقة';
+        }
+
+        function exportData() {
+            const tx = db.transaction("books", "readonly");
+            const data = [];
+            tx.objectStore("books").openCursor().onsuccess = (e) => {
+                const c = e.target.result;
+                if(c) { data.push(c.value); c.continue(); }
+                else {
+                    const a = document.createElement('a');
+                    a.href = URL.createObjectURL(new Blob([JSON.stringify(data)], {type: "application/json"}));
+                    a.download = "Ziad_Library_Backup.json"; a.click();
+                }
+            };
+        }
+
+        function importData(e) {
+            const reader = new FileReader();
+            reader.onload = (ev) => {
+                const data = JSON.parse(ev.target.result);
+                const tx = db.transaction("books", "readwrite");
+                data.forEach(item => {
+                    if (!item.readCount) item.readCount = 0;
+                    if (!item.lastPage) item.lastPage = 1;
+                    if (!item.progress) item.progress = 0;
+                    if (!item.readingTime) item.readingTime = 0;
+                    tx.objectStore("books").add(item);
+                });
+                tx.oncomplete = () => { playAudio('success'); render(); updateStats(); showToast("تم الاستيراد بنجاح"); };
+            };
+            reader.readAsText(e.target.files[0]);
+        }
+
+        function editBook(id) {
+            editingBookId = id;
+            playAudio('click');
+            db.transaction("books", "readonly").objectStore("books").get(id).onsuccess = (e) => {
+                const b = e.target.result;
+                if (!b) return;
+                document.getElementById('editTitle').value = b.name || '';
+                document.getElementById('editAuthor').value = b.author || '';
+                document.getElementById('editCat').value = b.category || 'كتب';
+                document.getElementById('editDesc').value = b.description || '';
+                document.getElementById('editRating').value = b.rating || '5';
+                document.getElementById('editBookModal').style.display = 'block';
+            };
+        }
+
+        function saveEditBook() {
+            const title = document.getElementById('editTitle').value.trim();
+            if (!title) {
+                showToast("❌ اسم الكتاب مطلوب");
+                return;
+            }
+            const author = document.getElementById('editAuthor').value.trim() || 'غير معروف';
+            const cat = document.getElementById('editCat').value;
+            const desc = document.getElementById('editDesc').value.trim() || "لا يوجد وصف";
+            const rating = parseInt(document.getElementById('editRating').value) || 3;
+
+            const tx = db.transaction("books", "readwrite");
+            const store = tx.objectStore("books");
+            store.get(editingBookId).onsuccess = (e) => {
+                let data = e.target.result;
+                data.name = title;
+                data.author = author;
+                data.category = cat;
+                data.description = desc;
+                data.rating = rating;
+                store.put(data);
+            };
+            tx.oncomplete = () => {
+                closeModals();
+                render();
+                showToast("✅ تم حفظ تعديلات الكتاب بنجاح");
+            };
+        }
+
+        // Sidebar Toggle
+        document.getElementById('sidebarToggle').onclick = () => {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('open');
+        };
+        document.addEventListener('click', function(event) {
+            const sidebar = document.getElementById('sidebar');
+            const toggle = document.getElementById('sidebarToggle');
+            if (sidebar.classList.contains('open') && !sidebar.contains(event.target) && !toggle.contains(event.target)) {
+                sidebar.classList.remove('open');
+            }
+        });
+
+        function openProfile() {
+            if (!localStorage.getItem('profileViewed')) {
+                document.getElementById('addUsernameModal').style.display = 'block';
+                localStorage.setItem('profileViewed', 'true');
+            } else {
+                showProfileStats();
+            }
+        }
+
+        function saveUsername() {
+            const name = document.getElementById('usernameInput').value.trim();
+            if (name) {
+                localStorage.setItem('userName', name);
+                userName = name;
+                updateUserNameDisplay();
+                closeModals();
+                showProfileStats();
+            } else {
+                showToast("❌ يرجى إدخال اسم");
+            }
+        }
+
+        function showProfileStats() {
+            document.getElementById('profileModal').style.display = 'block';
+            const content = document.getElementById('profileContent');
+            content.innerHTML = '<p>جاري حساب الإحصائيات...</p>';
+            let bookCount = 0;
+            let totalSize = 0;
+            let maxReadBook = { name: '', readCount: 0 };
+            let maxTimeBook = { name: '', readingTime: 0 };
+            let categories = {};
+            let completedBooks = 0;
+            let totalPagesRead = 0;
+            let totalReadCount = 0;
+            let avgRating = 0;
+            let avgProgress = 0;
+            let totalReadingTime = 0;
+            const tx = db.transaction("books", "readonly");
+            tx.objectStore("books").openCursor().onsuccess = (e) => {
+                const c = e.target.result;
+                if (c) {
+                    bookCount++;
+                    totalSize += c.value.size || 0;
+                    totalReadCount += c.value.readCount || 0;
+                    avgRating += parseInt(c.value.rating) || 0;
+                    avgProgress += c.value.progress || 0;
+                    totalPagesRead += (c.value.lastPage - 1) || 0;
+                    totalReadingTime += c.value.readingTime || 0;
+                    if (c.value.readCount > maxReadBook.readCount) {
+                        maxReadBook = { name: c.value.name, readCount: c.value.readCount };
+                    }
+                    if (c.value.readingTime > maxTimeBook.readingTime) {
+                        maxTimeBook = { name: c.value.name, readingTime: c.value.readingTime };
+                    }
+                    if (c.value.progress >= 100) completedBooks++;
+                    categories[c.value.category] = (categories[c.value.category] || 0) + 1;
+                    c.continue();
+                } else {
+                    avgRating = bookCount > 0 ? (avgRating / bookCount).toFixed(1) : 0;
+                    avgProgress = bookCount > 0 ? (avgProgress / bookCount).toFixed(1) : 0;
+                    let catStats = '';
+                    for (let cat in categories) {
+                        catStats += `<li>${cat}: ${categories[cat]} كتاب</li>`;
+                    }
+                    content.innerHTML = `
+                        <p>📚 عدد الكتب: ${bookCount}</p>
+                        <p>💾 الحجم الإجمالي: ${formatSize(totalSize)}</p>
+                        <p>📖 أكثر كتاب قراءة: ${maxReadBook.name} (${maxReadBook.readCount} مرات)</p>
+                        <p>🕒 أكثر كتاب وقت قراءة: ${maxTimeBook.name} (${formatTime(maxTimeBook.readingTime)})</p>
+                        <p>🏆 عدد الكتب المكتملة: ${completedBooks}</p>
+                        <p>⭐ متوسط التقييم: ${avgRating}</p>
+                        <p>📊 متوسط التقدم: ${avgProgress}%</p>
+                        <p>📄 إجمالي الصفحات المقروءة: ${totalPagesRead}</p>
+                        <p>🔄 إجمالي مرات القراءة: ${totalReadCount}</p>
+                        <p>🕒 إجمالي وقت القراءة: ${formatTime(totalReadingTime)}</p>
+                        <p>توزيع التصنيفات:</p>
+                        <ul>${catStats}</ul>
+                    `;
+                }
+            };
+        }
+
+        // ====================== مشغل PDF ======================
+        let pdfDoc = null,
+            pageNum = 1,
+            pageIsRendering = false,
+            pageNumIsPending = null,
+            scale = 1.5,
+            rotation = 0,
+            autoScrollIdx = null,
+            doublePageMode = false,
+            drawMode = false,
+            isErasing = false,
+            drawColor = '#ff0000',
+            drawWidth = 5,
+            drawingData = {};
+
+        const canvasLeft = document.getElementById('canvas-left'),
+              ctxLeft = canvasLeft.getContext('2d'),
+              canvasRight = document.getElementById('canvas-right'),
+              ctxRight = canvasRight.getContext('2d'),
+              drawOverlay = document.getElementById('draw-overlay'),
+              drawCtx = drawOverlay.getContext('2d');
+
+        function openReader(url, title) {
+            document.getElementById('pdfModal').style.display = 'block';
+            document.body.style.overflow = 'hidden';
+            readingStartTime = Date.now();
+            pdfjsLib.getDocument(url).promise.then(pdfDoc_ => {
+                pdfDoc = pdfDoc_;
+                document.getElementById('total-pages').innerText = pdfDoc.numPages;
+                drawingData = {};
+                renderPage(pageNum);
+            });
+        }
+
+        async function renderPage(num) {
+            if (pageIsRendering) {
+                pageNumIsPending = num;
+                return;
+            }
+            pageIsRendering = true;
+
+            const page = await pdfDoc.getPage(num);
+            const viewport = page.getViewport({ scale, rotation });
+            canvasLeft.height = viewport.height;
+            canvasLeft.width = viewport.width;
+            await page.render({ canvasContext: ctxLeft, viewport }).promise;
+
+            if (doublePageMode && num < pdfDoc.numPages) {
+                const nextPage = await pdfDoc.getPage(num + 1);
+                const nextViewport = nextPage.getViewport({ scale, rotation });
+                canvasRight.height = nextViewport.height;
+                canvasRight.width = nextViewport.width;
+                canvasRight.style.display = 'block';
+                await nextPage.render({ canvasContext: ctxRight, viewport: nextViewport }).promise;
+            } else {
+                canvasRight.style.display = 'none';
+            }
+
+            const wrapper = document.getElementById('canvas-wrapper');
+            drawOverlay.width = doublePageMode ? canvasLeft.width + canvasRight.width : canvasLeft.width;
+            drawOverlay.height = canvasLeft.height;
+            drawOverlay.style.width = drawOverlay.width + 'px';
+            drawOverlay.style.height = drawOverlay.height + 'px';
+
+            drawCtx.clearRect(0, 0, drawOverlay.width, drawOverlay.height);
+            if (drawingData[num]) {
+                const img = new Image();
+                img.src = drawingData[num];
+                img.onload = () => drawCtx.drawImage(img, 0, 0);
+            }
+            if (doublePageMode && drawingData[num + 1]) {
+                const img = new Image();
+                img.src = drawingData[num + 1];
+                img.onload = () => drawCtx.drawImage(img, canvasLeft.width, 0);
+            }
+
+            pageIsRendering = false;
+            if (pageNumIsPending !== null) {
+                renderPage(pageNumIsPending);
+                pageNumIsPending = null;
+            }
+            document.getElementById('page-num-input').value = num;
+        }
+
+        document.getElementById('prev-pg').onclick = () => { 
+            if (pageNum <= 1) return; 
+            pageNum -= doublePageMode ? 2 : 1; 
+            renderPage(pageNum); 
+            updateBookProgress(currentBookId, pageNum, pdfDoc.numPages);
+        };
+        document.getElementById('next-pg').onclick = () => { 
+            if (pageNum >= pdfDoc.numPages - (doublePageMode ? 1 : 0)) return; 
+            pageNum += doublePageMode ? 2 : 1; 
+            renderPage(pageNum); 
+            updateBookProgress(currentBookId, pageNum, pdfDoc.numPages);
+        };
+
+        document.getElementById('z-in').onclick = () => { scale += 0.2; renderPage(pageNum); updateZoomLabel(); };
+        document.getElementById('z-out').onclick = () => { if(scale <= 0.5) return; scale -= 0.2; renderPage(pageNum); updateZoomLabel(); };
+        function updateZoomLabel() { document.getElementById('zoom-percent').innerText = `${Math.round(scale * 100)}%`; }
+
+        document.getElementById('rotate-pdf').onclick = () => { rotation = (rotation + 90) % 360; renderPage(pageNum); };
+
+        document.getElementById('full-scr').onclick = () => {
+            let elem = document.getElementById('pdfModal');
+            if (!document.fullscreenElement) elem.requestFullscreen();
+            else document.exitFullscreen();
+        };
+
+        let themes = ['', 'mode-sepia', 'mode-dark'];
+        let currentTheme = 0;
+        document.getElementById('reader-theme').onclick = () => {
+            currentTheme = (currentTheme + 1) % themes.length;
+            document.getElementById('viewer-viewport').className = 'custom-scroll ' + themes[currentTheme];
+        };
+
+        document.getElementById('auto-scroll-toggle').onclick = function() {
+            if(autoScrollIdx) {
+                clearInterval(autoScrollIdx); autoScrollIdx = null;
+                this.innerText = "🖱️ تمرير تلقائي";
+            } else {
+                this.innerText = "🛑 إيقاف";
+                autoScrollIdx = setInterval(() => {
+                    document.getElementById('viewer-viewport').scrollTop += 1;
+                }, 30);
+            }
+        };
+
+        function closeReader() {
+            const readingDuration = Date.now() - readingStartTime;
+            updateReadingTime(currentBookId, readingDuration);
+            updateBookProgress(currentBookId, pageNum, pdfDoc.numPages);
+            document.getElementById('pdfModal').style.display = 'none';
+            document.body.style.overflow = 'auto';
+            if(autoScrollIdx) clearInterval(autoScrollIdx);
+            drawMode = false;
+            document.getElementById('draw-tools').style.display = 'none';
+            drawOverlay.removeEventListener('mousedown', startDrawing);
+            drawOverlay.removeEventListener('mousemove', draw);
+            drawOverlay.removeEventListener('mouseup', stopDrawing);
+            drawOverlay.removeEventListener('mouseout', stopDrawing);
+            currentBookId = null;
+            readingStartTime = null;
+        }
+
+        document.getElementById('page-num-input').onchange = function() {
+            let val = parseInt(this.value);
+            if(val > 0 && val <= pdfDoc.numPages) { 
+                pageNum = val; 
+                renderPage(pageNum); 
+                updateBookProgress(currentBookId, pageNum, pdfDoc.numPages);
+            }
+        };
+
+        window.addEventListener('keydown', (e) => {
+            if(document.getElementById('pdfModal').style.display === 'block') {
+                if(e.key === 'ArrowRight') document.getElementById('next-pg').click();
+                if(e.key === 'ArrowLeft') document.getElementById('prev-pg').click();
+                if(e.key === '+') document.getElementById('z-in').click();
+                if(e.key === '-') document.getElementById('z-out').click();
+                if(e.key === 'Escape') closeReader();
+            }
+        });
+
+        document.getElementById('reader-download').onclick = () => {
+            if (currentPdfUrl) {
+                const a = document.createElement('a');
+                a.href = currentPdfUrl;
+                a.download = document.getElementById('reader-filename').innerText + '.pdf';
+                a.click();
+            } else {
+                showToast("❌ خطأ في التحميل");
+            }
+        };
+
+        document.getElementById('double-page-toggle').onclick = () => {
+            doublePageMode = !doublePageMode;
+            renderPage(pageNum);
+        };
+
+        document.getElementById('draw-toggle').onclick = () => {
+            drawMode = !drawMode;
+            const tools = document.getElementById('draw-tools');
+            tools.style.display = drawMode ? 'flex' : 'none';
+            if (drawMode) {
+                drawColor = document.getElementById('draw-color').value;
+                drawWidth = document.getElementById('draw-width').value;
+                drawOverlay.addEventListener('mousedown', startDrawing);
+                drawOverlay.addEventListener('mousemove', draw);
+                drawOverlay.addEventListener('mouseup', stopDrawing);
+                drawOverlay.addEventListener('mouseout', stopDrawing);
+            } else {
+                drawOverlay.removeEventListener('mousedown', startDrawing);
+                drawOverlay.removeEventListener('mousemove', draw);
+                drawOverlay.removeEventListener('mouseup', stopDrawing);
+                drawOverlay.removeEventListener('mouseout', stopDrawing);
+            }
+        };
+
+        document.getElementById('draw-color').onchange = (e) => { drawColor = e.target.value; isErasing = false; };
+        document.getElementById('draw-width').onchange = (e) => { drawWidth = e.target.value; };
+        document.getElementById('draw-eraser').onclick = () => { isErasing = true; };
+        document.getElementById('draw-clear').onclick = () => { 
+            drawCtx.clearRect(0, 0, drawOverlay.width, drawOverlay.height); 
+            delete drawingData[pageNum];
+            if (doublePageMode) delete drawingData[pageNum + 1];
+        };
+
+        let drawing = false;
+        let lastX = 0, lastY = 0;
+
+        function startDrawing(e) {
+            drawing = true;
+            [lastX, lastY] = [e.offsetX, e.offsetY];
+        }
+
+        function draw(e) {
+            if (!drawing) return;
+            drawCtx.beginPath();
+            drawCtx.moveTo(lastX, lastY);
+            drawCtx.lineTo(e.offsetX, e.offsetY);
+            drawCtx.strokeStyle = isErasing ? '#ffffff' : drawColor;
+            drawCtx.lineWidth = isErasing ? 20 : drawWidth;
+            drawCtx.lineCap = 'round';
+            drawCtx.stroke();
+            [lastX, lastY] = [e.offsetX, e.offsetY];
+        }
+
+        function stopDrawing() {
+            if (drawing) {
+                drawing = false;
+                drawingData[pageNum] = drawOverlay.toDataURL();
+                if (doublePageMode) {
+                    const tempCanvas = document.createElement('canvas');
+                    tempCanvas.width = canvasRight.width;
+                    tempCanvas.height = canvasRight.height;
+                    const tempCtx = tempCanvas.getContext('2d');
+                    tempCtx.drawImage(drawOverlay, canvasLeft.width, 0, canvasRight.width, canvasRight.height, 0, 0, canvasRight.width, canvasRight.height);
+                    drawingData[pageNum + 1] = tempCanvas.toDataURL();
+                }
+            }
+        }
+
+        // ====================== دالة تشغيل الصوت المحدثة (مع دعم الكتم والصوت المختار) ======================
+        function playAudio(type) {
+            if (isMuted) return;
+            let url = sounds[type];
+            if (type === 'engine') {
+                url = sounds[selectedLoginSound];
+            }
+            if (!url) return;
+            const audio = new Audio(url);
+            audio.volume = 0.5;
+            audio.play().catch(e => console.log("Audio blocked"));
+        }
+
+        // ====================== شاشة البداية - إخفاء بعد 3 ثوانٍ ======================
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                const splash = document.getElementById('splash-screen');
+                if (splash) {
+                    splash.classList.add('hide-splash');
+                    document.body.style.overflow = 'auto';
+                }
+            }, 3000);
+        });
+    </script>
+</body>
+</html>
